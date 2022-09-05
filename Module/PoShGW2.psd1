@@ -70,8 +70,10 @@ RequiredModules = @(
 
 # Modules to import as nested modules of the module specified in RootModule/ModuleToProcess
 NestedModules = @(
+    'Achievements.psm1',
+    'ConfigManagement.psm1',
     'KeyManagement.psm1',
-    'ConfigManagement.psm1'
+    'CoreAPICalls.psm1'
   )
 
 
@@ -130,10 +132,10 @@ PrivateData = @{
 } # End of PrivateData hashtable
 
 # HelpInfo URI of this module
-# HelpInfoURI = ''
+HelpInfoURI = 'https://github.com/smallfoxx/PoShGW2/wiki'
 
 # Default prefix for commands exported from this module. Override the default prefix using Import-Module -Prefix.
-DefaultCommandPrefix = 'GW2'
+# DefaultCommandPrefix = 'GW2'
 
 }
 
