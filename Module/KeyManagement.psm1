@@ -15,12 +15,12 @@ Function TestSecretVault {
 }
 
 Function Set-APIKey {
-    [CmdletBinding(DefaultParameterSetName="ClearText")]
+    [CmdletBinding(DefaultParameterSetName="Secure")]
     Param(
-        [parameter(ParameterSetName="ClearText")]
+        [parameter(ParameterSetName="ClearText",Mandatory)]
         [string]$APIKey,
-        [parameter(ParameterSetName="Secure",Mandatory)]
-        [SecureString]$SecureAPIKey,
+        [parameter(ParameterSetName="Secure")]
+        [SecureString]$SecureAPIKey=(Read-Host -Prompt "Please paste API Key" -AsSecureString),
         [string]$GW2Profile="Default",
         [switch]$Force)
     
@@ -163,6 +163,10 @@ Function Get-Achievement {
             (Get-APIValue -APIValue "$Base") -split "`n" | %{ [int]$_ } | Get-Achievement #-AchivementID ([int]($_)) }
         }
     }
+}
+
+Function Get-Base {
+    Get-APIValue 
 }
 
 Function Get-KeyVars {
