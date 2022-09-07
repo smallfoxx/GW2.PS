@@ -70,15 +70,29 @@ RequiredModules = @(
 
 # Modules to import as nested modules of the module specified in RootModule/ModuleToProcess
 NestedModules = @(
-    'Achievements.psm1',
-    'ConfigManagement.psm1',
-    'KeyManagement.psm1',
-    'CoreAPICalls.psm1'
+    "CoreAPICalls.psm1",
+    "KeyManagement.psm1",
+    "ConfigManagement.psm1",
+    "Account.psm1",
+    "Achievements.psm1",
+    "Characters.psm1",
+    "Daily.psm1",
+    "Guild.psm1",
+    "HomeInstance.psm1",
+    "Items.psm1",
+    "Map.psm1",
+    "Mechanics.psm1",
+    "Miscellaneous.psm1",
+    "PvP.psm1",
+    "Story.psm1",
+    "Tradeskills.psm1",
+    "TradingPost.psm1",
+    "WvW.psm1"
   )
 
 
 # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
-FunctionsToExport = '*-*','LoadKeyConfig'#,'LoadConfig'
+FunctionsToExport = '*-*','LoadKeyConfig','BuildGW2Functions'#,'LoadConfig'
 
 # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
 CmdletsToExport = '*'

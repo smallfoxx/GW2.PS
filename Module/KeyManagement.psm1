@@ -40,9 +40,9 @@ Function Set-GW2APIKey {
 }
 
 Function Get-GW2APIKey {
-    param([string]$Profile=$ModConfig.DefaultProfile)
+    param([string]$GW2Profile=$ModConfig.DefaultProfile)
 
-    $ModConfig.$Profile.APIKey
+    $ModConfig.Profiles.$GW2Profile.APIKey
 
 }
 

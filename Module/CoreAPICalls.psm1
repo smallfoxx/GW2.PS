@@ -41,14 +41,24 @@ Split up parameter sets when a very long parameter is provided
 }
 
 Function Get-GW2APIValue {
+<#
+.SYNOPSIS
+Get a value from the Guild Wars 2 APIv2
+#>
+    [CmdletBinding(DefaultParameterSetName="SecureAPIKey")]
     param(
-        $APIBase='https://api.guildwars2.com/v2',
-        $APIKey = (Get-GW2APIKey),
+        [parameter(ParameterSetName="SecureAPIKey",Position=0)]
+        [System.Security.SecureString]$SecureAPIKey=(Get-GW2APIKey),
+        [parameter(ParameterSetName="ClearAPIKey",Position=0,Mandatory)]
+        [string]$APIKey,
         $APIValue='',
-        $APIParams=@{}
+        $APIParams=@{},
+        $APIBase='https://api.guildwars2.com/v2'
     )
 
     Process {
+        If (-not ([string]::IsNullOrEmpty($APIKey))) { write-host 'yy';$SecureAPIKey = ConvertTo-SecureString -String $APIKey -AsPlainText -Force }
+
         $URI = "$APIBase/$APIValue"
 
         $IsOversized = $false
@@ -56,22 +66,39 @@ Function Get-GW2APIValue {
             $SplitParams=Split-GW2OversizedParam -ParamName $ParamName -APIParams $APIParams
             If ($SplitParams.back) {
                 $IsOversized = $true
-                Get-APIValue -APIBase $APIBase -APIKey $APIKey -APIValue $APIValue -APIParams $SplitParams.front
-                Get-APIValue -APIBase $APIBase -APIKey $APIKey -APIValue $APIValue -APIParams $SplitParams.back
+                Get-GW2APIValue -APIBase $APIBase -SecureAPIKey $SecureAPIKey -APIValue $APIValue -APIParams $SplitParams.front
+                Get-GW2APIValue -APIBase $APIBase -SecureAPIKey $SecureAPIKey -APIValue $APIValue -APIParams $SplitParams.back
             }
         }
         If (-not $IsOversized) {
-            Write-Debug "calling REST GET: $URI ($(($APIParams.Values | ForEach-Object { $_ }) -join ';'))"
+            Write-Debug "calling REST GET: $URI ($(($APIParams.Values | ForEach-Object { $_ }) -join ';')) - ($($PSCmdlet.ParameterSetName)) [$(Get-GW2APIKey)]"
             If ($APIParams.count -gt 0) {
-                Invoke-RestMethod -Method Get -Uri $URI -Authentication Bearer -Token $APIKey -Body $APIParams
+                Invoke-RestMethod -Method Get -Uri $URI -Authentication Bearer -Token $SecureAPIKey -Body $APIParams
             } else {
-                Invoke-RestMethod -Method Get -Uri $URI -Authentication Bearer -Token $APIKey
+                Invoke-RestMethod -Method Get -Uri $URI -Authentication Bearer -Token $SecureAPIKey
             }
-        }
+        }#>
     }
 }
 
 Function Get-GW2Base {
-    Get-APIValue 
+<#
+.SYNOPSIS
+Obtain the In Game Name (IGN) for the account
+#>
+[cmdletbinding(DefaultParameterSetName="SecureAPIKey")]
+    param(
+        [parameter(ParameterSetName="SecureAPIKey")]
+        [SecureString]$SecureAPIKey=(Get-GW2APIKey),
+        [parameter(ParameterSetName="ClearAPIKey",Mandatory)]
+        [string]$APIKey
+    )
+    Process {
+        If (-not ([string]::IsNullOrEmpty($APIKey))) { write-host 'yy';$SecureAPIKey = ConvertTo-SecureString -String $APIKey -AsPlainText -Force }
+
+        ((Get-GW2APIValue -SecureAPIKey $SecureAPIKey) -split "`n") | ForEach-Object {
+            If ($_ -match "(?<base>/v2/\S+) \[[^\[\]]\]") { $matches.base.tostring() }
+        }
+    }
 }
 

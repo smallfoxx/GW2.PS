@@ -126,4 +126,59 @@ Will store a value in a profile unless -SystemSetting is indicated. If no profil
     }
 }
 
+Function NewGW2Function {
+    param(
+        [string]$Base,
+        [string[]]$Subsection
+    )
+
+    $FunctionSections=ForEach ($Section in (@($Base)+$Subsection)) {
+        If (-not [string]::IsNullOrEmpty($Section)) {
+            ($Section.Substring(0,1).ToUpper()+$Section.Substring(1).ToLower()) -replace "s$",""
+        }
+    }
+
+    $FunctionString = "Get-GW2$($FunctionSections -join '')"
+    $URIStub = ($FunctionSections -join "/").ToLower()
+
+@"
+Function $FunctionString {
+<#
+.SYNOPSIS
+Get the $URIStub from Guild Wars 2 API
+#>
+[cmdletbinding(DefaultParameterSetName="SecureAPIKey")]
+    param(
+        [parameter(ParameterSetName="SecureAPIKey")]
+        [SecureString]`$SecureAPIKey=(Get-GW2APIKey),
+        [parameter(ParameterSetName="ClearAPIKey",Mandatory)]
+        [string]`$APIKey
+    )
+    Process {
+        If (-not ([string]::IsNullOrEmpty(`$APIKey))) { `$SecureAPIKey = ConvertTo-SecureString -String `$APIKey -AsPlainText -Force }
+        Get-GW2APIValue -APIValue "$URIStub" -SecureAPIKey `$SecureAPIKey 
+    }
+}
+
+"@ 
+
+}
+
+Function BuildGW2Functions {
+    param($Bases=((Get-GW2Base) -replace "^/v2/","" ))
+
+    ForEach ($Base in $Bases) {
+        $Sections = $Base -split '/'
+        $Root=$Sections[0]
+        If ($Sections.Length -gt 1) {
+            $Subs=$Sections[1..($Sections.Length - 1)]
+        } else {
+            $Subs=$null
+        }
+        NewGW2Function -Base $Root -Subsection $Subs | scb
+        Write-Host "Function for $base on clipboard"
+        Pause
+    }
+}
+
 LoadConfig
