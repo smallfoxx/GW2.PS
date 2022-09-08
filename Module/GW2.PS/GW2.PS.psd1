@@ -12,7 +12,7 @@
 # RootModule = ''
 
 # Version number of this module.
-ModuleVersion = '0.0.1.2'
+ModuleVersion = '0.0.1.3'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -27,7 +27,7 @@ Author = 'SmallFoxx'
 CompanyName = 'SmallFoxx'
 
 # Copyright statement for this module
-Copyright = '(c) SmallFoxx. All rights reserved.'
+Copyright = '(c) 2022 SmallFoxx'
 
 # Description of the functionality provided by this module
 Description = 'This is a module to utilize the APIv2 published for the MMORPG Guild Wars 2 from ArenaNet for the community. This is a fan produced project and is in NO WAY endorsed, supported, and/or condoned by ArenaNet, Guild Wars 2, or its affiliates. It will adhere to all the requirements as published by ArenaNet to ensure no violations or rules by the users who use it as intended.'
