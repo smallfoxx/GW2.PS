@@ -9,13 +9,13 @@ Enter **GW2.PS** (queue dramatic theme music with sweeping visualization [pendin
 
 ## Installation
 
-The intention is to install the module from the PowerShell Gallery with the following command:
+The module is available from the official PowerShell Gallery with the following command:
 
     Install-Module -Name GW2.PS
 
 However, this is still in pre-production, so if you want to use this early, you can download the contents of the [Module](/smallfoxx/GW2.PS/tree/main/Module) folder to your local system and run:
 
-    Import-Module <pathToDownloadFolder>\GW2.PS.psd1
+    Import-Module <pathToDownloadFolder>\GW2.PS
 
 ## Setup
 
@@ -38,14 +38,18 @@ page of your ArenaNet Account:
 
 ## Example(s)
 
-Once the module is installed and setup, you can then run common commands to retrieve data about your account.  For example, if you would like to retrieve your
-daily achievements, you can run the following command:
+Once the module is installed and setup, you can then run common commands to retrieve data about your account.  For example, to get details about
+your account such as your in game name (IGN), expansions, world, etc., you can run:
+
+    Get-GW2Account
+
+As another example, if you would like to retrieve the daily achievements, you can run the following command:
 
     Get-GW2Achievement -Daily
     
 ## Documentation
 
-For additional details and instructions, please see the repositories [Wiki](https://github.com/smallfoxx/GW2.PS/wiki) at:
+For additional details and instructions, please see the repositories [Wiki](/smallfoxx/GW2.PS/wiki) at:
 
 https://github.com/smallfoxx/GW2.PS/wiki
 
