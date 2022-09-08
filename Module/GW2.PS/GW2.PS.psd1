@@ -119,7 +119,7 @@ PrivateData = @{
     PSData = @{
 
         # Tags applied to this module. These help with module discovery in online galleries.
-        # Tags = @()
+        Tags = @("GuildWars2","GW2","SMFX","SmFoxx","Gaming")
 
         # A URL to the license for this module.
         LicenseUri = 'https://github.com/smallfoxx/GW2.PS/LICENSE'
