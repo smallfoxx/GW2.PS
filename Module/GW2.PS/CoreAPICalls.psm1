@@ -69,19 +69,26 @@ Function Get-GW2APIValue {
 .SYNOPSIS
 Get a value from the Guild Wars 2 APIv2
 #>
-    [CmdletBinding(DefaultParameterSetName = "SecureAPIKey")]
+    [CmdletBinding(DefaultParameterSetName = "ProfileName")]
     param(
-        [parameter(ParameterSetName = "SecureAPIKey", Position = 0)]
-        [System.Security.SecureString]$SecureAPIKey = (Get-GW2APIKey),
-        [parameter(ParameterSetName = "ClearAPIKey", Position = 0, Mandatory)]
+        [parameter(ParameterSetName = "SecureAPIKey", Position = 0, Mandatory)]
+        [System.Security.SecureString]$SecureAPIKey,
+        [parameter(ParameterSetName = "ClearAPIKey", Mandatory)]
         [string]$APIKey,
+        [parameter(ParameterSetName = "ProfileName", Position = 0)]
+        [string]$GW2Profile = (Get-GW2DefaultProfile),
         $APIValue = '',
         $APIParams = @{},
         $APIBase = 'https://api.guildwars2.com/v2'
     )
 
     Process {
-        If (-not ([string]::IsNullOrEmpty($APIKey))) { $SecureAPIKey = ConvertTo-SecureString -String $APIKey -AsPlainText -Force }
+        If ($Profile) {
+            $SecureAPIKey = Get-GW2APIKey -GW2Profile $GW2Profile
+        }
+        elseIf (-not ([string]::IsNullOrEmpty($APIKey))) {
+            $SecureAPIKey = ConvertTo-SecureString -String $APIKey -AsPlainText -Force 
+        }
 
         $URI = "$APIBase/$APIValue"
 
@@ -111,17 +118,13 @@ Function Get-GW2Base {
 .SYNOPSIS
 Obtain the In Game Name (IGN) for the account
 #>
-    [cmdletbinding(DefaultParameterSetName = "SecureAPIKey")]
+    [cmdletbinding(DefaultParameterSetName = "ProfileName")]
     param(
-        [parameter(ParameterSetName = "SecureAPIKey")]
-        [SecureString]$SecureAPIKey = (Get-GW2APIKey),
-        [parameter(ParameterSetName = "ClearAPIKey", Mandatory)]
-        [string]$APIKey
+        [parameter(ParameterSetName = "ProfileName", Position = 0)]
+        [string]$GW2Profile = (Get-GW2DefaultProfile)
     )
     Process {
-        If (-not ([string]::IsNullOrEmpty($APIKey))) { write-host 'yy'; $SecureAPIKey = ConvertTo-SecureString -String $APIKey -AsPlainText -Force }
-
-        ((Get-GW2APIValue -SecureAPIKey $SecureAPIKey) -split "`n") | ForEach-Object {
+        ((Get-GW2APIValue -GW2Profile $GW2Profile) -split "`n") | ForEach-Object {
             If ($_ -match "(?<base>/v2/\S+) \[[^\[\]]\]") { $matches.base.tostring() }
         }
     }
