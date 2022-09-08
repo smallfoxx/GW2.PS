@@ -33,7 +33,7 @@ Copyright = '(c) SmallFoxx. All rights reserved.'
 # Description = ''
 
 # Minimum version of the PowerShell engine required by this module
-# PowerShellVersion = ''
+PowerShellVersion = '5.1'
 
 # Name of the PowerShell host required by this module
 # PowerShellHostName = ''
@@ -51,10 +51,11 @@ Copyright = '(c) SmallFoxx. All rights reserved.'
 # ProcessorArchitecture = ''
 
 # Modules that must be imported into the global environment prior to importing this module
-RequiredModules = @(
+<#RequiredModules = @(
     'Microsoft.PowerShell.SecretManagement',
     'Microsoft.PowerShell.SecretStore'
   )
+#>
 
 # Assemblies that must be loaded prior to importing this module
 # RequiredAssemblies = @()
@@ -95,7 +96,7 @@ NestedModules = @(
 FunctionsToExport = '*-*','LoadKeyConfig','BuildGW2Functions'#,'LoadConfig'
 
 # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
-CmdletsToExport = '*'
+# CmdletsToExport = '*'
 
 # Variables to export from this module
 VariablesToExport = 'ModConfig'

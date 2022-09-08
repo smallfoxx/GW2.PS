@@ -17,7 +17,7 @@ Split up parameter sets when a very long parameter is provided
             'front'=@{}
             'back'=@{}
         }
-        ForEach ($key in ($APIParams.keys | ?{ $_ -ne $ParamName})) {
+        ForEach ($key in ($APIParams.keys | Where-Object { $_ -ne $ParamName})) {
             $returnParam.front.$key = $APIParams.$key
             $returnParam.back.$key = $APIParams.$key
         }
@@ -26,8 +26,8 @@ Split up parameter sets when a very long parameter is provided
         $SplitParam = $FocusParam -split ","
         If ($SplitParam.Count -gt $MaxCount) {
             Write-Debug "Spliting count: $($SplitParam.Count)"
-            $returnParam.front.$ParamName = (0..($MaxCount-1) | %{ $SplitParam[$_] }) -join "," 
-            $returnParam.back.$ParamName = ($MaxCount..($SplitParam.Count-1) | %{ $SplitParam[$_]}) -join "," 
+            $returnParam.front.$ParamName = (0..($MaxCount-1) | ForEach-Object { $SplitParam[$_] }) -join "," 
+            $returnParam.back.$ParamName = ($MaxCount..($SplitParam.Count-1) | ForEach-Object { $SplitParam[$_]}) -join "," 
         } elseif ($SplitParam[0].Length -gt $MaxLength) {
             Write-Debug "Spliting length: $($SplitParam[0].Length)"
             $returnParam.front.$ParamName = $SplitParam[0].Substring(0,$MaxLength)
@@ -37,6 +37,23 @@ Split up parameter sets when a very long parameter is provided
             $returnParam.Remove('back')
         }
         return $returnParam
+    }
+}
+
+Function InvokeGetAPI {
+    param(
+        [string]$URI,
+        [securestring]$Token,
+        [hashtable]$APIParams=@{}
+    )
+
+    If ($PSVersionTable.PSVersion -ge "7.0") {
+        Invoke-RestMethod -Method Get -Uri $URI -Authentication Bearer -Token $Token -Body $APIParams
+    } elseif ($PSVersionTable.PSVersion -ge "5.1") {
+        $APIKey = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto([System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($SecureAPIKey))
+        Invoke-RestMethod -Method Get -Uri $URI -Header @{ "Authorization"="Bearer $APIKey" } -Body $APIParams
+    } else {
+        throw ("Current PS Version [$($PSVersionTable.PSVersion)] not supported!  Install the latest version of PowerShell for support")
     }
 }
 
@@ -57,7 +74,7 @@ Get a value from the Guild Wars 2 APIv2
     )
 
     Process {
-        If (-not ([string]::IsNullOrEmpty($APIKey))) { write-host 'yy';$SecureAPIKey = ConvertTo-SecureString -String $APIKey -AsPlainText -Force }
+        If (-not ([string]::IsNullOrEmpty($APIKey))) { $SecureAPIKey = ConvertTo-SecureString -String $APIKey -AsPlainText -Force }
 
         $URI = "$APIBase/$APIValue"
 
@@ -73,9 +90,9 @@ Get a value from the Guild Wars 2 APIv2
         If (-not $IsOversized) {
             Write-Debug "calling REST GET: $URI ($(($APIParams.Values | ForEach-Object { $_ }) -join ';')) - ($($PSCmdlet.ParameterSetName)) [$(Get-GW2APIKey)]"
             If ($APIParams.count -gt 0) {
-                Invoke-RestMethod -Method Get -Uri $URI -Authentication Bearer -Token $SecureAPIKey -Body $APIParams
+                InvokeGetAPI -Uri $URI -Token $SecureAPIKey -Body $APIParams
             } else {
-                Invoke-RestMethod -Method Get -Uri $URI -Authentication Bearer -Token $SecureAPIKey
+                InvokeGetAPI -Uri $URI -Token $SecureAPIKey
             }
         }#>
     }

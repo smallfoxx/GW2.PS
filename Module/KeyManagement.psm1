@@ -46,10 +46,6 @@ Function Get-GW2APIKey {
 
 }
 
-Function Get-GW2KeyVars {
-    Get-Variable
-}
-
 Function LoadKeyConfig {
     Set-Variable -Name 'ModConfig' -Scope script -Option AllScope -Value (LoadConfig -PassThru)
 }

@@ -175,7 +175,7 @@ Function BuildGW2Functions {
         } else {
             $Subs=$null
         }
-        NewGW2Function -Base $Root -Subsection $Subs | scb
+        NewGW2Function -Base $Root -Subsection $Subs | Set-Clipboard
         Write-Host "Function for $base on clipboard"
         Pause
     }
