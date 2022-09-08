@@ -30,7 +30,7 @@ CompanyName = 'SmallFoxx'
 Copyright = '(c) SmallFoxx. All rights reserved.'
 
 # Description of the functionality provided by this module
-# Description = ''
+Description = 'This is a module to utilize the APIv2 published for the MMORPG Guild Wars 2 from ArenaNet for the community. This is a fan produced project and is in NO WAY endorsed, supported, and/or condoned by ArenaNet, Guild Wars 2, or its affiliates. It will adhere to all the requirements as published by ArenaNet to ensure no violations or rules by the users who use it as intended.'
 
 # Minimum version of the PowerShell engine required by this module
 PowerShellVersion = '5.1'
