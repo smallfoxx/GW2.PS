@@ -1,5 +1,5 @@
 $MyPublisher="SMFX"
-$MyModuleName="PoShGW2"
+$MyModuleName="GW2.PS"
 
 $ReservedSettings = @(
     'Module',
@@ -139,7 +139,7 @@ Function NewGW2Function {
     }
 
     $FunctionString = "Get-GW2$($FunctionSections -join '')"
-    $URIStub = ($FunctionSections -join "/").ToLower()
+    $URIStub = ((@($Base)+$Subsection) -join "/").ToLower()
 
 @"
 Function $FunctionString {
