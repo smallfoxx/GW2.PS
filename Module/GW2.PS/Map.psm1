@@ -3,16 +3,12 @@ Function Get-GW2Dungeon {
     .SYNOPSIS
     Get the account/dungeons from Guild Wars 2 API
     #>
-    [cmdletbinding(DefaultParameterSetName = "SecureAPIKey")]
+    [cmdletbinding()]
     param(
-        [parameter(ParameterSetName = "SecureAPIKey")]
-        [SecureString]$SecureAPIKey = (Get-GW2APIKey),
-        [parameter(ParameterSetName = "ClearAPIKey", Mandatory)]
-        [string]$APIKey
+        [string]$GW2Profile = (Get-GW2DefaultProfile)
     )
     Process {
-        If (-not ([string]::IsNullOrEmpty($APIKey))) { $SecureAPIKey = ConvertTo-SecureString -String $APIKey -AsPlainText -Force }
-        Get-GW2APIValue -APIValue "account/dungeons" -SecureAPIKey $SecureAPIKey 
+        Get-GW2APIValue -APIValue "account/dungeons" -GW2Profile $GW2Profile 
     }
 }
     
@@ -21,16 +17,12 @@ Function Get-GW2Mapchest {
     .SYNOPSIS
     Get the account/mapchests from Guild Wars 2 API
     #>
-    [cmdletbinding(DefaultParameterSetName = "SecureAPIKey")]
+    [cmdletbinding()]
     param(
-        [parameter(ParameterSetName = "SecureAPIKey")]
-        [SecureString]$SecureAPIKey = (Get-GW2APIKey),
-        [parameter(ParameterSetName = "ClearAPIKey", Mandatory)]
-        [string]$APIKey
+        [string]$GW2Profile = (Get-GW2DefaultProfile)
     )
     Process {
-        If (-not ([string]::IsNullOrEmpty($APIKey))) { $SecureAPIKey = ConvertTo-SecureString -String $APIKey -AsPlainText -Force }
-        Get-GW2APIValue -APIValue "account/mapchests" -SecureAPIKey $SecureAPIKey 
+        Get-GW2APIValue -APIValue "account/mapchests" -GW2Profile $GW2Profile 
     }
 }
 
@@ -39,22 +31,18 @@ Function Get-GW2Adventure {
     .SYNOPSIS
     Get the adventures from Guild Wars 2 API
     #>
-    [cmdletbinding(DefaultParameterSetName = "SecureAPIKey")]
+    [cmdletbinding()]
     param(
-        [parameter(ParameterSetName = "SecureAPIKey")]
-        [SecureString]$SecureAPIKey = (Get-GW2APIKey),
-        [parameter(ParameterSetName = "ClearAPIKey", Mandatory)]
-        [string]$APIKey,
+        [string]$GW2Profile = (Get-GW2DefaultProfile),
         [parameter(ValueFromPipeline, ValueFromPipelineByPropertyName)]
         [int[]]$id
     )
     Process {
-        If (-not ([string]::IsNullOrEmpty($APIKey))) { $SecureAPIKey = ConvertTo-SecureString -String $APIKey -AsPlainText -Force }
         If ($id) {
-            Get-GW2APIValue -APIValue "adventures" -SecureAPIKey $SecureAPIKey -APIParams @{ "ids" = $id }
+            Get-GW2APIValue -APIValue "adventures" -GW2Profile $GW2Profile -APIParams @{ "ids" = $id }
         }
         else {
-            Get-GW2APIValue -APIValue "adventures" -SecureAPIKey $SecureAPIKey
+            Get-GW2APIValue -APIValue "adventures" -GW2Profile $GW2Profile
         }
     }
 }
@@ -64,19 +52,15 @@ Function Get-GW2AdventureLeaderboard {
     .SYNOPSIS
     Get the adventures/(id)/leaderboards from Guild Wars 2 API
     #>
-    [cmdletbinding(DefaultParameterSetName = "SecureAPIKey")]
+    [cmdletbinding()]
     param(
-        [parameter(ParameterSetName = "SecureAPIKey")]
-        [SecureString]$SecureAPIKey = (Get-GW2APIKey),
-        [parameter(ParameterSetName = "ClearAPIKey", Mandatory)]
-        [string]$APIKey,
+        [string]$GW2Profile = (Get-GW2DefaultProfile),
         [oarameter(ValueFromPipeline, ValueFromPipelineByPropertyName)]
         [string[]]$id
     )
     Process {
-        If (-not ([string]::IsNullOrEmpty($APIKey))) { $SecureAPIKey = ConvertTo-SecureString -String $APIKey -AsPlainText -Force }
         ForEach ($i in $id) {
-            Get-GW2APIValue -APIValue "adventures/$i/leaderboards" -SecureAPIKey $SecureAPIKey 
+            Get-GW2APIValue -APIValue "adventures/$i/leaderboards" -GW2Profile $GW2Profile 
         }
     }
 }
@@ -86,16 +70,12 @@ Function Get-GW2Continent {
     .SYNOPSIS
     Get the continents/ from Guild Wars 2 API
     #>
-    [cmdletbinding(DefaultParameterSetName = "SecureAPIKey")]
+    [cmdletbinding()]
     param(
-        [parameter(ParameterSetName = "SecureAPIKey")]
-        [SecureString]$SecureAPIKey = (Get-GW2APIKey),
-        [parameter(ParameterSetName = "ClearAPIKey", Mandatory)]
-        [string]$APIKey
+        [string]$GW2Profile = (Get-GW2DefaultProfile)
     )
     Process {
-        If (-not ([string]::IsNullOrEmpty($APIKey))) { $SecureAPIKey = ConvertTo-SecureString -String $APIKey -AsPlainText -Force }
-        Get-GW2APIValue -APIValue "continents" -SecureAPIKey $SecureAPIKey 
+        Get-GW2APIValue -APIValue "continents" -GW2Profile $GW2Profile 
     }
 }
 

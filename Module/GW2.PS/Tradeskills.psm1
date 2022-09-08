@@ -3,33 +3,25 @@ Function Get-GW2Dailycrafting {
     .SYNOPSIS
     Get the account/dailycrafting from Guild Wars 2 API
     #>
-    [cmdletbinding(DefaultParameterSetName="SecureAPIKey")]
-        param(
-            [parameter(ParameterSetName="SecureAPIKey")]
-            [SecureString]$SecureAPIKey=(Get-GW2APIKey),
-            [parameter(ParameterSetName="ClearAPIKey",Mandatory)]
-            [string]$APIKey
-        )
-        Process {
-            If (-not ([string]::IsNullOrEmpty($APIKey))) { $SecureAPIKey = ConvertTo-SecureString -String $APIKey -AsPlainText -Force }
-            Get-GW2APIValue -APIValue "account/dailycrafting" -SecureAPIKey $SecureAPIKey 
-        }
+    [cmdletbinding()]
+    param(
+        [string]$GW2Profile = (Get-GW2DefaultProfile)
+    )
+    Process {
+        Get-GW2APIValue -APIValue "account/dailycrafting" -GW2Profile $GW2Profile 
     }
+}
     
 Function Get-GW2Recipe {
-<#
+    <#
 .SYNOPSIS
 Get the account/recipes from Guild Wars 2 API
 #>
-[cmdletbinding(DefaultParameterSetName="SecureAPIKey")]
+    [cmdletbinding()]
     param(
-        [parameter(ParameterSetName="SecureAPIKey")]
-        [SecureString]$SecureAPIKey=(Get-GW2APIKey),
-        [parameter(ParameterSetName="ClearAPIKey",Mandatory)]
-        [string]$APIKey
+        [string]$GW2Profile = (Get-GW2DefaultProfile)
     )
     Process {
-        If (-not ([string]::IsNullOrEmpty($APIKey))) { $SecureAPIKey = ConvertTo-SecureString -String $APIKey -AsPlainText -Force }
-        Get-GW2APIValue -APIValue "account/recipes" -SecureAPIKey $SecureAPIKey 
+        Get-GW2APIValue -APIValue "account/recipes" -GW2Profile $GW2Profile 
     }
 }

@@ -3,16 +3,12 @@ Function Get-GW2CommerceDelivery {
     .SYNOPSIS
     Get the commerce/delivery from Guild Wars 2 API
     #>
-    [cmdletbinding(DefaultParameterSetName = "SecureAPIKey")]
+    [cmdletbinding()]
     param(
-        [parameter(ParameterSetName = "SecureAPIKey")]
-        [SecureString]$SecureAPIKey = (Get-GW2APIKey),
-        [parameter(ParameterSetName = "ClearAPIKey", Mandatory)]
-        [string]$APIKey
+        [string]$GW2Profile = (Get-GW2DefaultProfile)
     )
     Process {
-        If (-not ([string]::IsNullOrEmpty($APIKey))) { $SecureAPIKey = ConvertTo-SecureString -String $APIKey -AsPlainText -Force }
-        Get-GW2APIValue -APIValue "commerce/delivery" -SecureAPIKey $SecureAPIKey 
+        Get-GW2APIValue -APIValue "commerce/delivery" -GW2Profile $GW2Profile 
     }
 }
     
@@ -21,16 +17,12 @@ Function Get-GW2CommerceTransaction {
     .SYNOPSIS
     Get the commerce/transactions from Guild Wars 2 API
     #>
-    [cmdletbinding(DefaultParameterSetName = "SecureAPIKey")]
+    [cmdletbinding()]
     param(
-        [parameter(ParameterSetName = "SecureAPIKey")]
-        [SecureString]$SecureAPIKey = (Get-GW2APIKey),
-        [parameter(ParameterSetName = "ClearAPIKey", Mandatory)]
-        [string]$APIKey
+        [string]$GW2Profile = (Get-GW2DefaultProfile)
     )
     Process {
-        If (-not ([string]::IsNullOrEmpty($APIKey))) { $SecureAPIKey = ConvertTo-SecureString -String $APIKey -AsPlainText -Force }
-        Get-GW2APIValue -APIValue "commerce/transactions" -SecureAPIKey $SecureAPIKey 
+        Get-GW2APIValue -APIValue "commerce/transactions" -GW2Profile $GW2Profile 
     }
 }
 
