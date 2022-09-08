@@ -22,7 +22,8 @@ List achiveemtnt categories
         [switch]$Categories,
         [switch]$Completed,
         [switch]$Lookup,
-        [switch]$All
+        [switch]$All,
+        [string]$GW2Profile = (Get-GW2DefaultProfile)
     )
 
     Begin {
@@ -36,15 +37,15 @@ List achiveemtnt categories
 
     Process {
         If ($Daily -or $Tomorrow) {
-            return (Get-GW2AchievementDaily -Tomorrow:$Tomorrow )
+            return (Get-GW2AchievementDaily -Tomorrow:$Tomorrow -GW2Profile $GW2Profile )
 
         }
         elseif ($Groups) {
-            return (Get-GW2AchievementGroup )
+            return (Get-GW2AchievementGroup -GW2Profile $GW2Profile )
 
         }
         elseif ($Categories) {
-            return (Get-GW2AchievementCategory -ID $AchivementID )
+            return (Get-GW2AchievementCategory -ID $AchivementID -GW2Profile $GW2Profile )
 
         }
         else {
@@ -56,16 +57,16 @@ List achiveemtnt categories
         If ($IDs) {
             Write-Debug "Getting achivements for ids $(($IDs -join ","))"
             $APIValue = "achievements"
-            Get-GW2APIValue -APIValue $APIValue -APIParams @{ "ids" = ($IDs -join ",") }
+            Get-GW2APIValue -APIValue $APIValue -APIParams @{ "ids" = ($IDs -join ",") } -GW2Profile $GW2Profile
         }
         elseif (-not ($Daily -or $Tomorrow) -and -not ($Categories)) {
             If ($All) {
-                (Get-GW2APIValue -APIValue "achievements") -split "`n" | ForEach-Object { [int]$_ } | Get-GW2Achievement
+                (Get-GW2APIValue -APIValue "achievements") -split "`n" | ForEach-Object { [int]$_ } | Get-GW2Achievement -GW2Profile $GW2Profile
             }
             else {
                 If ($Lookup) {
-                    $achievements = Get-GW2APIValue -APIValue "account/achievements" -APIParams @{ "done" = [bool]$Completed } # | Where-Object { $_.done -eq $Completed}
-                    $allDetails = $achievements | Get-GW2Achievement
+                    $achievements = Get-GW2APIValue -APIValue "account/achievements" -APIParams @{ "done" = [bool]$Completed } -GW2Profile $GW2Profile # | Where-Object { $_.done -eq $Completed}
+                    $allDetails = $achievements | Get-GW2Achievement -GW2Profile $GW2Profile
                     ForEach ($achievement in $achievements) {
                         $details = $allDetails | Where-Object { $_.id -eq $achievement.id } 
                         If ($details) {
@@ -77,8 +78,8 @@ List achiveemtnt categories
                     }  
                 }
                 else {
-                    ForEach ($achievement in (Get-GW2APIValue -APIValue "account/achievements" -APIParams @{ "done" = [bool]$Completed } )) {
-                        $details = Get-GW2Achievement -AchivementID $achievement.id 
+                    ForEach ($achievement in (Get-GW2APIValue -APIValue "account/achievements" -APIParams @{ "done" = [bool]$Completed } -GW2Profile $GW2Profile )) {
+                        $details = Get-GW2Achievement -AchivementID $achievement.id  -GW2Profile $GW2Profile
                         If ($details) {
                             ForEach ($prop in ($details | Get-Member -MemberType NoteProperty | Where-Object { $_.Name -ne 'id' } ) ) {
                                 $achievement | Add-Member NoteProperty $prop.Name $details.($prop.Name) -ErrorAction SilentlyContinue
@@ -102,15 +103,16 @@ Get daily achievements
         [ValidateSet("pvp", "pve", "wvw", "fractals", "special", "All")]
         [string]$Section = "All",
         [switch]$Tomorrow,
-        [switch]$IDOnly
+        [switch]$IDOnly,
+        [string]$GW2Profile = (Get-GW2DefaultProfile)
     )
 
     Process {
         If ($Tomorrow) {
-            $Dailies = Get-GW2APIValue -APIValue "achievements/daily/tomorrow"
+            $Dailies = Get-GW2APIValue -APIValue "achievements/daily/tomorrow" -GW2Profile $GW2Profile
         }
         else {
-            $Dailies = Get-GW2APIValue -APIValue "achievements/daily"
+            $Dailies = Get-GW2APIValue -APIValue "achievements/daily" -GW2Profile $GW2Profile
         }
         switch ($Section) {
             "All" {
@@ -119,11 +121,13 @@ Get daily achievements
                 }
                 else {
                     Write-Debug "Getting details for ALL daily achivements"
-                    $Results = @{}
+                    $Results = [ordered]@{}
                     ForEach ($Sec in ($Dailies | Get-Member -MemberType NoteProperty).Name) {
                         If ($Dailies.$Sec) {
                             write-Debug "`tSection: $Sec"
-                            $Results.$Sec = $Dailies.$Sec | Get-GW2Achievement
+                            $Results.$Sec = $Dailies.$Sec | Get-GW2Achievement -GW2Profile $GW2Profile
+                        } else {
+                            $Results.$Sec = $null
                         }
                     }
                     return $Results
@@ -134,7 +138,7 @@ Get daily achievements
                     $Dailies.$Section
                 }
                 else {
-                    $Dailies.$Section | Get-GW2Achievement
+                    $Dailies.$Section | Get-GW2Achievement -GW2Profile $GW2Profile
                 }
             }
         }
@@ -153,7 +157,8 @@ Get categories of achievements
         [parameter(ValueFromPipelineByPropertyName, ValueFromPipeline, ParameterSetName = "IDList")]
         [int[]]$ID,
         [parameter(ParameterSetName = "ReturnIDs")]
-        [switch]$IDOnly
+        [switch]$IDOnly,
+        [string]$GW2Profile = (Get-GW2DefaultProfile)
     )
 
     Begin {
@@ -169,17 +174,17 @@ Get categories of achievements
 
     End {
         If ($IDList.Count -gt 0) {
-            $Categories = Get-GW2APIValue -APIValue "achievements/categories" -APIParams @{ "ids" = ($IDList -join ",") } 
+            $Categories = Get-GW2APIValue -APIValue "achievements/categories" -APIParams @{ "ids" = ($IDList -join ",") } -GW2Profile $GW2Profile 
             return $Categories
         }
         else {
-            $Categories = Get-GW2APIValue -APIValue "achievements/categories" 
+            $Categories = Get-GW2APIValue -APIValue "achievements/categories" -GW2Profile $GW2Profile 
 
             If ($IDOnly) {
                 return $Categories
             }
             else {
-                $Categories | Get-GW2AchievementCategory
+                $Categories | Get-GW2AchievementCategory -GW2Profile $GW2Profile
             }
         }
     }
@@ -197,7 +202,8 @@ Get categories of achievements
         [parameter(ValueFromPipelineByPropertyName, ValueFromPipeline, ParameterSetName = "IDList")]
         [string[]]$ID,
         [parameter(ParameterSetName = "ReturnIDs")]
-        [switch]$IDOnly
+        [switch]$IDOnly,
+        [string]$GW2Profile = (Get-GW2DefaultProfile)
     )
 
     Begin {
@@ -213,17 +219,17 @@ Get categories of achievements
 
     End {
         If ($IDList.Count -gt 0) {
-            $Groups = Get-GW2APIValue -APIValue "achievements/groups" -APIParams @{ "ids" = ($IDList -join ",") } 
+            $Groups = Get-GW2APIValue -APIValue "achievements/groups" -APIParams @{ "ids" = ($IDList -join ",") } -GW2Profile $GW2Profile 
             return $Groups
         }
         else {
-            $Groups = Get-GW2APIValue -APIValue "achievements/groups" 
+            $Groups = Get-GW2APIValue -APIValue "achievements/groups" -GW2Profile $GW2Profile
 
             If ($IDOnly) {
                 return $Groups
             }
             else {
-                $Groups | Get-GW2AchievementGroup
+                $Groups | Get-GW2AchievementGroup -GW2Profile $GW2Profile
             }
         }
     }

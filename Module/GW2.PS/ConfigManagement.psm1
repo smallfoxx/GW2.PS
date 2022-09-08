@@ -2,6 +2,7 @@ $MyPublisher="SMFX"
 $MyModuleName="GW2.PS"
 
 $ReservedSettings = @(
+    'DefaultProfile',
     'Module',
     'Publisher',
     'Profiles'
@@ -147,16 +148,12 @@ Function $FunctionString {
 .SYNOPSIS
 Get the $URIStub from Guild Wars 2 API
 #>
-[cmdletbinding(DefaultParameterSetName="SecureAPIKey")]
+    [cmdletbinding()]
     param(
-        [parameter(ParameterSetName="SecureAPIKey")]
-        [SecureString]`$SecureAPIKey=(Get-GW2APIKey),
-        [parameter(ParameterSetName="ClearAPIKey",Mandatory)]
-        [string]`$APIKey
+        [string]`$GW2Profile = (Get-GW2DefaultProfile)
     )
     Process {
-        If (-not ([string]::IsNullOrEmpty(`$APIKey))) { `$SecureAPIKey = ConvertTo-SecureString -String `$APIKey -AsPlainText -Force }
-        Get-GW2APIValue -APIValue "$URIStub" -SecureAPIKey `$SecureAPIKey 
+        Get-GW2APIValue -APIValue "$URIStub" -GW2Profile `$GW2Profile 
     }
 }
 
