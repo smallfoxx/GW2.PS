@@ -110,7 +110,83 @@ Function Get-GW2Color {
     }
 }
     
+Function Get-GW2Finisher {
+    <#
+    .SYNOPSIS
+    Get the finishers from Guild Wars 2 API
+    #>
+    [cmdletbinding()]
+    param(
+        [string]$GW2Profile = (Get-GW2DefaultProfile)
+    )
+    Process {
+        Get-GW2APIValue -APIValue "finishers" -GW2Profile $GW2Profile 
+    }
+}
+
+Function Get-GW2Item {
+    <#
+    .SYNOPSIS
+    Get the items from Guild Wars 2 API
+    #>
+    [cmdletbinding()]
+    param(
+        [string]$GW2Profile = (Get-GW2DefaultProfile),
+        [parameter(ValueFromPipelineByPropertyName, ValueFromPipeline)]
+        [Alias("id", "ids")]
+        [string[]]$ItemID
+    )
+    Process {
+        If ($ItemID) {
+            Get-GW2APIValue -APIValue "items" -GW2Profile $GW2Profile -APIParams @{ 'ids' = ($ItemID -join ',') }
+        }
+        else {
+            Get-GW2APIValue -APIValue "items" -GW2Profile $GW2Profile 
+        }
+    }
+}
     
-        
-        
-        
+Function Get-GW2ItemStat {
+    <#
+    .SYNOPSIS
+    Get the itemstats from Guild Wars 2 API
+    #>
+    [cmdletbinding()]
+    param(
+        [string]$GW2Profile = (Get-GW2DefaultProfile),
+        [parameter(ValueFromPipelineByPropertyName, ValueFromPipeline)]
+        [Alias("id", "ids")]
+        [string[]]$StatsID
+    )
+    Process {
+        If ($StatsID) {
+            Get-GW2APIValue -APIValue "itemstats" -GW2Profile $GW2Profile -APIParams @{ 'ids' = ($StatsID -join ',') }
+        }
+        else {
+            Get-GW2APIValue -APIValue "itemstats" -GW2Profile $GW2Profile 
+        }
+    }
+}
+    
+Function Get-GW2Material {
+    <#
+    .SYNOPSIS
+    Get the materials/ from Guild Wars 2 API
+    #>
+    [cmdletbinding()]
+    param(
+        [string]$GW2Profile = (Get-GW2DefaultProfile),
+        [parameter(ValueFromPipelineByPropertyName, ValueFromPipeline)]
+        [Alias("id", "ids")]
+        [string[]]$MaterialID
+    )
+    Process {
+        If ($MaterialID) {
+            Get-GW2APIValue -APIValue "materials" -GW2Profile $GW2Profile -APIParams @{ 'ids' = ($MaterialID -join ',') }
+        }
+        else {
+            Get-GW2APIValue -APIValue "materials" -GW2Profile $GW2Profile 
+        }
+    }
+}
+    

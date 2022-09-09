@@ -1,5 +1,5 @@
-$MyPublisher="SMFX"
-$MyModuleName="GW2.PS"
+$MyPublisher = "SMFX"
+$MyModuleName = "GW2.PS"
 
 $ReservedSettings = @(
     'DefaultProfile',
@@ -9,7 +9,7 @@ $ReservedSettings = @(
 )
 
 Function ConfigPath {
-<#
+    <#
 .SYNOPSIS
 Return the path to the configuration file; might depend on platform.
 #>
@@ -17,20 +17,20 @@ Return the path to the configuration file; might depend on platform.
 }
 
 Function BasicProfile {
-<#
+    <#
 .SYNOPSIS
 Provide standard template structure for a profile
 #>
     [CmdletBinding()]
     param([string]$Name)
     [ordered]@{
-        "Name"=$Name
-        "APIKey"=$null
+        "Name"   = $Name
+        "APIKey" = $null
     }
 }
 
 Function LoadConfig {
-<#
+    <#
 .SYNOPSIS
 Load details from configuration file
 .DESCRIPTION
@@ -44,10 +44,10 @@ Import configuration details from file system and generate a default template if
                 $Null = mkdir (Split-Path (ConfigPath) -Parent)
             }
             $BasicConfig = [ordered]@{
-                'Module'=$MyModuleName
-                'Publisher'=$MyPublisher
-                'DefaultProfile'="Default"
-                'Profiles' = @{
+                'Module'         = $MyModuleName
+                'Publisher'      = $MyPublisher
+                'DefaultProfile' = "Default"
+                'Profiles'       = @{
                     'Default' = BasicProfile -Name "Default"
                 }
             }
@@ -62,7 +62,7 @@ Import configuration details from file system and generate a default template if
 }
 
 Function Get-GW2DefaultProfile {
-<#
+    <#
 .SYNOPSIS
 Return the name of the current default
 #>
@@ -70,7 +70,7 @@ Return the name of the current default
 }
 
 Function Save-GW2Config {
-<#
+    <#
 .SYNOPSIS
 Export settings to configuration file
 #>
@@ -87,21 +87,21 @@ Export settings to configuration file
 }
 
 Function Set-GW2ConfigValue {
-<#
+    <#
 .SYNOPSIS
 Set a value for the configuration
 .DESCRIPTION
 Will store a value in a profile unless -SystemSetting is indicated. If no profile or system is specified, it store in the default profile.
 #>
-    [CmdletBinding(DefaultParameterSetName="ProfileSetting")]
+    [CmdletBinding(DefaultParameterSetName = "ProfileSetting")]
     param(
         [parameter(ValueFromPipelineByPropertyName)]
         [string]$Name,
-        [parameter(ValueFromPipeline,ValueFromPipelineByPropertyName)]
+        [parameter(ValueFromPipeline, ValueFromPipelineByPropertyName)]
         $Value,
-        [parameter(ValueFromPipelineByPropertyName,ParameterSetName="ProfileSetting")]
-        [string]$GW2Profile=(Get-DefaultProfile),
-        [parameter(ParameterSetName="SystemSetting",Mandatory)]
+        [parameter(ValueFromPipelineByPropertyName, ParameterSetName = "ProfileSetting")]
+        [string]$GW2Profile = (Get-DefaultProfile),
+        [parameter(ParameterSetName = "SystemSetting", Mandatory)]
         [switch]$SystemSetting
     )
 
@@ -114,7 +114,8 @@ Will store a value in a profile unless -SystemSetting is indicated. If no profil
             If ($Name -notin $ReservedSettings) {
                 $TempConfig.$Name = $Value
             }
-        } else {
+        }
+        else {
             If (-not ($TempConfig.Profiles.containsKey($GW2Profile))) {
                 $TempConfig.Profiles.$GW2Profile = BasicProfile -Name $GW2Profile
             }
@@ -127,22 +128,71 @@ Will store a value in a profile unless -SystemSetting is indicated. If no profil
     }
 }
 
+Function Set-GW2DefaultProfile {
+    <#
+    .SYNOPSIS
+    Set the default profile name
+    #>
+    [CmdletBinding()]
+    param()
+    DynamicParam {
+        $RuntimeParamDic  = New-Object System.Management.Automation.RuntimeDefinedParameterDictionary
+        $StandardProps = @('Mandatory','ValueFromPipelineByPropertyName','Position')
+        $Attrib = [ordered]@{
+            'Name' = @{
+                'AttribType' = [string]
+                'Mandatory' = $true
+                'ValueFromPipelineByPropertyName' = $true
+                'Position' = 0
+                'ValidSet' = ([string[]]($ModConfig.Profiles.Keys))
+            }
+        }
+        
+        ForEach ($AttribName in $Attrib.Keys) {
+            #[string]$AttribName = $Key.ToString()
+            $ThisAttrib = New-Object System.Management.Automation.ParameterAttribute
+            ForEach ($Prop in $StandardProps) {
+                If ($null -ne $Attrib.$AttribName.$Prop) {
+                    $ThisAttrib.$Prop = $Attrib.$AttribName.$Prop
+                }
+            }
+            $ThisCollection = New-Object  System.Collections.ObjectModel.Collection[System.Attribute]
+            $ThisCollection.Add($ThisAttrib)
+
+            If ($Attrib.$AttribName.ValidSet) {
+                $ThisValidation = New-Object  System.Management.Automation.ValidateSetAttribute($Attrib.$AttribName.ValidSet)
+                $ThisCollection.Add($ThisValidation)
+            }
+
+            $ThisRuntimeParam  = New-Object System.Management.Automation.RuntimeDefinedParameter($AttribName,  $Attrib.$AttribName.AttribType, $ThisCollection)
+            $RuntimeParamDic.Add($AttribName,  $ThisRuntimeParam)
+        }
+
+        return  $RuntimeParamDic
+      
+    }
+
+    Process {
+        Set-GW2ConfigValue -SystemSetting -Name DefaultProfile -Value $Name
+    }
+}    
+
 Function NewGW2Function {
     param(
         [string]$Base,
         [string[]]$Subsection
     )
 
-    $FunctionSections=ForEach ($Section in (@($Base)+$Subsection)) {
+    $FunctionSections = ForEach ($Section in (@($Base) + $Subsection)) {
         If (-not [string]::IsNullOrEmpty($Section)) {
-            ($Section.Substring(0,1).ToUpper()+$Section.Substring(1).ToLower()) -replace "s$",""
+            ($Section.Substring(0, 1).ToUpper() + $Section.Substring(1).ToLower()) -replace "s$", ""
         }
     }
 
     $FunctionString = "Get-GW2$($FunctionSections -join '')"
-    $URIStub = ((@($Base)+$Subsection) -join "/").ToLower()
+    $URIStub = ((@($Base) + $Subsection) -join "/").ToLower()
 
-@"
+    @"
 Function $FunctionString {
 <#
 .SYNOPSIS
@@ -162,15 +212,16 @@ Get the $URIStub from Guild Wars 2 API
 }
 
 Function BuildGW2Functions {
-    param($Bases=((Get-GW2Base) -replace "^/v2/","" ))
+    param($Bases = ((Get-GW2Base) -replace "^/v2/", "" ))
 
     ForEach ($Base in $Bases) {
         $Sections = $Base -split '/'
-        $Root=$Sections[0]
+        $Root = $Sections[0]
         If ($Sections.Length -gt 1) {
-            $Subs=$Sections[1..($Sections.Length - 1)]
-        } else {
-            $Subs=$null
+            $Subs = $Sections[1..($Sections.Length - 1)]
+        }
+        else {
+            $Subs = $null
         }
         NewGW2Function -Base $Root -Subsection $Subs | Set-Clipboard
         Write-Host "Function for $base on clipboard"

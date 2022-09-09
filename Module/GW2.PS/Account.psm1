@@ -70,7 +70,7 @@ Function Get-GW2Luck {
     }
 }
   
-Function Get-GW2MailCarrier {
+Function Get-GW2AccountMailCarrier {
     <#
     .SYNOPSIS
     Get the account/mailcarriers from Guild Wars 2 API
@@ -84,7 +84,7 @@ Function Get-GW2MailCarrier {
     }
 }
 
-Function Get-GW2Mastery {
+Function Get-GW2AccountMastery {
     <#
     .SYNOPSIS
     Get the account/masteries from Guild Wars 2 API
@@ -176,6 +176,41 @@ Function New-GW2Subtoken {
         If (-not [string]::IsNullOrEmpty($URLs)) { $APIParams.urls = $URLs -join ',' }
 
         Get-GW2APIValue -APIValue "createsubtoken" -GW2Profile $GW2Profile -APIParams $APIParams
+    }
+}
+        
+Function Get-GW2Glider {
+    <#
+    .SYNOPSIS
+    Get the gliders from Guild Wars 2 API
+    #>
+    [cmdletbinding()]
+    param(
+        [string]$GW2Profile = (Get-GW2DefaultProfile)
+    )
+    Process {
+        Get-GW2APIValue -APIValue "gliders" -GW2Profile $GW2Profile 
+    }
+}
+
+Function Get-GW2MailCarrier {
+    <#
+        .SYNOPSIS
+        Get the mailcarriers from Guild Wars 2 API
+        #>
+    [cmdletbinding()]
+    param(
+        [string]$GW2Profile = (Get-GW2DefaultProfile),
+        [parameter(ValueFromPipelineByPropertyName, ValueFromPipeline)]
+        [Alias("ids")]
+        [string[]]$ID
+    )
+    Process {
+        If ($ID) {
+            Get-GW2APIValue -APIValue "mailcarriers" -GW2Profile $GW2Profile -APIParams @{ 'ids' = ($ID -join ',') }
+        } else {
+            Get-GW2APIValue -APIValue "mailcarriers" -GW2Profile $GW2Profile 
+        }
     }
 }
         

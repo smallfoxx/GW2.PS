@@ -79,4 +79,33 @@ Function Get-GW2Continent {
     }
 }
 
+Function Get-GW2Map {
+    <#
+    .SYNOPSIS
+    Get the maps from Guild Wars 2 API
+    #>
+    [cmdletbinding()]
+    param(
+        [string]$GW2Profile = (Get-GW2DefaultProfile),
+        [parameter(ValueFromPipelineByPropertyName, ValueFromPipeline)]
+        [Alias("id", "ids")]
+        [string[]]$MapID
+    )
+    Begin {
+        $Maps = @()
+    }
+    Process {
+        If ($MapID) {
+            $Maps += $MapID
+        }
+    }
+    End {
+        If ($Maps.Length -gt 0) {
+            Get-GW2APIValue -APIValue "maps" -GW2Profile $GW2Profile -APIParams @{ 'ids' = ($Maps -join ',') }
+        }
+        else {
+            Get-GW2APIValue -APIValue "maps" -GW2Profile $GW2Profile 
+        }
+    }
+}
     
