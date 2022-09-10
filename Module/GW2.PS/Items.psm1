@@ -68,7 +68,7 @@ Function Get-GW2Novelty {
     }
 }
 
-Function Get-GW2Outfit {
+Function Get-GW2AccountOutfit {
     <#
 .SYNOPSIS
 Get the account/outfits from Guild Wars 2 API

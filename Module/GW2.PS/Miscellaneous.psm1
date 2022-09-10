@@ -84,20 +84,43 @@ Function Get-GW2Novelty {
     .SYNOPSIS
     Get the novelties from Guild Wars 2 API
     #>
-        [cmdletbinding()]
-        param(
-            [string]$GW2Profile = (Get-GW2DefaultProfile),
-            [parameter(ValueFromPipelineByPropertyName, ValueFromPipeline)]
-            [Alias("id", "ids")]
-            [string[]]$NoveltyID
-        )
-        Process {
-            If ($NoveltyID) {
-                Get-GW2APIValue -APIValue "novelties" -GW2Profile $GW2Profile -APIParams @{ 'ids' = ($NoveltyID -join ',') }
-            }
-            else {
-                Get-GW2APIValue -APIValue "novelties" -GW2Profile $GW2Profile 
-            }
+    [cmdletbinding()]
+    param(
+        [string]$GW2Profile = (Get-GW2DefaultProfile),
+        [parameter(ValueFromPipelineByPropertyName, ValueFromPipeline)]
+        [Alias("id", "ids")]
+        [string[]]$NoveltyID
+    )
+    Process {
+        If ($NoveltyID) {
+            Get-GW2APIValue -APIValue "novelties" -GW2Profile $GW2Profile -APIParams @{ 'ids' = ($NoveltyID -join ',') }
+        }
+        else {
+            Get-GW2APIValue -APIValue "novelties" -GW2Profile $GW2Profile 
         }
     }
+}
+    
+Function Get-GW2Raid {
+    <#
+    .SYNOPSIS
+    Get the raids/ from Guild Wars 2 API
+    #>
+    [cmdletbinding()]
+    param(
+        [string]$GW2Profile = (Get-GW2DefaultProfile),
+        [parameter(ValueFromPipelineByPropertyName, ValueFromPipeline)]
+        [Alias("id", "ids")]
+        [string[]]$RaidID
+    )
+    Process {
+        If ($RaidID) {
+            Get-GW2APIValue -APIValue "raids" -GW2Profile $GW2Profile -APIParams @{ 'ids' = ($RaidID -join ',') }
+        }
+        else {
+            Get-GW2APIValue -APIValue "raids" -GW2Profile $GW2Profile 
+        }
+    }
+}
+    
     
