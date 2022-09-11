@@ -168,7 +168,8 @@ Function NewGW2Function {
             ($Section.Substring(0, 1).ToUpper() + $Section.Substring(1).ToLower()) -replace "s$", ""
         }
     }
-
+    
+    $FinalSection = $FunctionSections[-1]
     $FunctionString = "Get-GW2$($FunctionSections -join '')"
     $URIStub = ((@($Base) + $Subsection) -join "/").ToLower()
 
@@ -181,10 +182,10 @@ Get the $URIStub from Guild Wars 2 API
     [cmdletbinding()]
     param()
     DynamicParam {
-        CommonGW2Parameters
+        CommonGW2Parameters -IDType "$FinalSection"
     }
     Begin {
-        `$CommParams = CommonGW2Parameters
+        `$CommParams = CommonGW2Parameters -IDTy[e "$FinalSection"
     }
     Process {
         ForEach (`$Comm in (`$CommParams.Keys)) {
@@ -193,7 +194,12 @@ Get the $URIStub from Guild Wars 2 API
                 Set-Variable -Name `$Comm -Value `$CommParams.`$Comm.Value
             }
         }
-        Get-GW2APIValue -APIValue "$URIStub" -GW2Profile `$GW2Profile 
+        `$APIEndpoint = "$URIStub"
+        If (`$ID) {
+            Get-GW2APIValue -APIValue `$APIEndpoint -GW2Profile `$GW2Profile -APIParams { 'ids' = (`$ID -join ',') }
+        } else {
+            Get-GW2APIValue -APIValue `$APIEndpoint -GW2Profile `$GW2Profile
+        }
     }
 }
 

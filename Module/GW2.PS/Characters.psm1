@@ -156,7 +156,7 @@ Function Get-GW2Character {
         }
         else {
             write-host "Get characters with $GW2Profile"
-            $PSBoundParameters | %{ write-host "boundParam: $($_.key)"}
+            $PSBoundParameters | % { write-host "boundParam: $($_.key)" }
             Get-GW2APIValue -APIValue "characters" -GW2Profile $GW2Profile 
         }
     }
@@ -479,5 +479,28 @@ Function Get-GW2CharacterTraining {
     }
 }
                                 
-
+Function Get-GW2Tokeninfo {
+    <#
+    .SYNOPSIS
+    Get the tokeninfo/ from Guild Wars 2 API
+    #>
+    [cmdletbinding()]
+    param()
+    DynamicParam {
+        CommonGW2Parameters
+    }
+    Begin {
+        $CommParams = CommonGW2Parameters
+    }
+    Process {
+        ForEach ($Comm in ($CommParams.Keys)) {
+            Set-Variable -Name $Comm -Value $PSBoundParameters.$Comm
+            If (-not ((Get-Variable -Name $Comm).Value)) {
+                Set-Variable -Name $Comm -Value $CommParams.$Comm.Value
+            }
+        }
+        Get-GW2APIValue -APIValue "tokeninfo" -GW2Profile $GW2Profile 
+    }
+}
+    
             

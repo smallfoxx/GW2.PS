@@ -191,4 +191,62 @@ Function Get-GW2Skill {
         }
     }
 }
-        
+
+Function Get-GW2Specialization {
+    <#
+    .SYNOPSIS
+    Get the specializations/ from Guild Wars 2 API
+    #>
+    [cmdletbinding()]
+    param()
+    DynamicParam {
+        CommonGW2Parameters
+    }
+    Begin {
+        $CommParams = CommonGW2Parameters
+    }
+    Process {
+        ForEach ($Comm in ($CommParams.Keys)) {
+            Set-Variable -Name $Comm -Value $PSBoundParameters.$Comm
+            If (-not ((Get-Variable -Name $Comm).Value)) {
+                Set-Variable -Name $Comm -Value $CommParams.$Comm.Value
+            }
+        }
+        If ($ID) {
+            Get-GW2APIValue -APIValue "specializations" -GW2Profile $GW2Profile -APIParams @{ 'ids' = ($ID -join ',') }
+        }
+        else {
+            Get-GW2APIValue -APIValue "specializations" -GW2Profile $GW2Profile 
+        }
+    }
+}
+
+Function Get-GW2Trait {
+    <#
+    .SYNOPSIS
+    Get the traits/ from Guild Wars 2 API
+    #>
+        [cmdletbinding()]
+        param()
+        DynamicParam {
+            CommonGW2Parameters -IDType 'Trait'
+        }
+        Begin {
+            $CommParams = CommonGW2Parameters -IDType 'Trait'
+        }
+        Process {
+            ForEach ($Comm in ($CommParams.Keys)) {
+                Set-Variable -Name $Comm -Value $PSBoundParameters.$Comm
+                If (-not ((Get-Variable -Name $Comm).Value)) {
+                    Set-Variable -Name $Comm -Value $CommParams.$Comm.Value
+                }
+            }
+            If ($ID) {
+                Get-GW2APIValue -APIValue "traits" -GW2Profile $GW2Profile -APIParams @{ 'ids' = ($ID -join ',') }
+            }
+            else {
+                Get-GW2APIValue -APIValue "traits" -GW2Profile $GW2Profile 
+            }
+        }
+    }
+    
