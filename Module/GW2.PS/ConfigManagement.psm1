@@ -185,7 +185,7 @@ Get the $URIStub from Guild Wars 2 API
         CommonGW2Parameters -IDType "$FinalSection"
     }
     Begin {
-        `$CommParams = CommonGW2Parameters -IDTy[e "$FinalSection"
+        `$CommParams = CommonGW2Parameters -IDType "$FinalSection"
     }
     Process {
         ForEach (`$Comm in (`$CommParams.Keys)) {
@@ -196,7 +196,7 @@ Get the $URIStub from Guild Wars 2 API
         }
         `$APIEndpoint = "$URIStub"
         If (`$ID) {
-            Get-GW2APIValue -APIValue `$APIEndpoint -GW2Profile `$GW2Profile -APIParams { 'ids' = (`$ID -join ',') }
+            Get-GW2APIValue -APIValue `$APIEndpoint -GW2Profile `$GW2Profile -APIParams @{ 'ids' = (`$ID -join ',') }
         } else {
             Get-GW2APIValue -APIValue `$APIEndpoint -GW2Profile `$GW2Profile
         }
