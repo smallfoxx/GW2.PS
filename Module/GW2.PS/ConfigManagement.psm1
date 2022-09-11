@@ -2,7 +2,7 @@ $MyPublisher = "SMFX"
 $MyModuleName = "GW2.PS"
 
 $ReservedSettings = @(
-    'DefaultProfile',
+    #'DefaultProfile',
     'Module',
     'Publisher',
     'Profiles'
@@ -24,8 +24,8 @@ Provide standard template structure for a profile
     [CmdletBinding()]
     param([string]$Name)
     [ordered]@{
-        "Name"   = $Name
-        "APIKey" = $null
+        "GW2Profile" = $Name
+        "APIKey"     = $null
     }
 }
 
@@ -100,7 +100,7 @@ Will store a value in a profile unless -SystemSetting is indicated. If no profil
         [parameter(ValueFromPipeline, ValueFromPipelineByPropertyName)]
         $Value,
         [parameter(ValueFromPipelineByPropertyName, ParameterSetName = "ProfileSetting")]
-        [string]$GW2Profile = (Get-DefaultProfile),
+        [string]$GW2Profile = (Get-GW2DefaultProfile),
         [parameter(ParameterSetName = "SystemSetting", Mandatory)]
         [switch]$SystemSetting
     )
@@ -124,7 +124,8 @@ Will store a value in a profile unless -SystemSetting is indicated. If no profil
     }
 
     End {
-        $TempConfig | Save-Config
+        $TempConfig | Save-GW2Config
+        LoadConfig
     }
 }
 
@@ -136,44 +137,23 @@ Function Set-GW2DefaultProfile {
     [CmdletBinding()]
     param()
     DynamicParam {
-        $RuntimeParamDic  = New-Object System.Management.Automation.RuntimeDefinedParameterDictionary
-        $StandardProps = @('Mandatory','ValueFromPipelineByPropertyName','Position')
-        $Attrib = [ordered]@{
-            'Name' = @{
-                'AttribType' = [string]
-                'Mandatory' = $true
-                'ValueFromPipelineByPropertyName' = $true
-                'Position' = 0
-                'ValidSet' = ([string[]]($ModConfig.Profiles.Keys))
-            }
-        }
-        
-        ForEach ($AttribName in $Attrib.Keys) {
-            #[string]$AttribName = $Key.ToString()
-            $ThisAttrib = New-Object System.Management.Automation.ParameterAttribute
-            ForEach ($Prop in $StandardProps) {
-                If ($null -ne $Attrib.$AttribName.$Prop) {
-                    $ThisAttrib.$Prop = $Attrib.$AttribName.$Prop
-                }
-            }
-            $ThisCollection = New-Object  System.Collections.ObjectModel.Collection[System.Attribute]
-            $ThisCollection.Add($ThisAttrib)
-
-            If ($Attrib.$AttribName.ValidSet) {
-                $ThisValidation = New-Object  System.Management.Automation.ValidateSetAttribute($Attrib.$AttribName.ValidSet)
-                $ThisCollection.Add($ThisValidation)
-            }
-
-            $ThisRuntimeParam  = New-Object System.Management.Automation.RuntimeDefinedParameter($AttribName,  $Attrib.$AttribName.AttribType, $ThisCollection)
-            $RuntimeParamDic.Add($AttribName,  $ThisRuntimeParam)
-        }
-
-        return  $RuntimeParamDic
-      
+        CommonGW2Parameters
     }
-
+    Begin {
+        $CommParams = CommonGW2Parameters
+    }
     Process {
-        Set-GW2ConfigValue -SystemSetting -Name DefaultProfile -Value $Name
+        ForEach ($Comm in ($CommParams.Keys)) {
+            Set-Variable -Name $Comm -Value $PSBoundParameters.$Comm
+            If (-not [string]::IsNullOrEmpty((Get-Variable -Name $Comm))) {
+                Set-Variable -Name $Comm -Value $CommParams.$Comm.Value
+            }
+        }
+        If ($GW2Profile) {
+            Write-Debug "Setting default profile to $GW2Profile"
+            Set-GW2ConfigValue -SystemSetting -Name DefaultProfile -Value $GW2Profile
+            #Get-Variable
+        }
     }
 }    
 
@@ -199,10 +179,20 @@ Function $FunctionString {
 Get the $URIStub from Guild Wars 2 API
 #>
     [cmdletbinding()]
-    param(
-        [string]`$GW2Profile = (Get-GW2DefaultProfile)
-    )
+    param()
+    DynamicParam {
+        CommonGW2Parameters
+    }
+    Begin {
+        `$CommParams = CommonGW2Parameters
+    }
     Process {
+        ForEach (`$Comm in (`$CommParams.Keys)) {
+            Set-Variable -Name `$Comm -Value `$PSBoundParameters.`$Comm
+            If (-not ((Get-Variable -Name `$Comm).Value)) {
+                Set-Variable -Name `$Comm -Value `$CommParams.`$Comm.Value
+            }
+        }
         Get-GW2APIValue -APIValue "$URIStub" -GW2Profile `$GW2Profile 
     }
 }
@@ -227,6 +217,82 @@ Function BuildGW2Functions {
         Write-Host "Function for $base on clipboard"
         Pause
     }
+}
+
+Function CommonGW2Parameters {
+    <#
+.SYNOPSIS
+Create standard, dynamic parameters for GW2 functions.
+.DESCRIPTION
+This will create standard parameters for GW2 functions to provide values such as GW2Profile, ID, and other attributes
+.PARAMETER IDType
+Specifies that function calling this uses ID parameters
+#>
+    param([string]$IDType, [switch]$IDMandatory)
+    $RuntimeParamDic = New-Object System.Management.Automation.RuntimeDefinedParameterDictionary
+    $StandardProps = @('Mandatory', 'ValueFromPipelineByPropertyName', 'ValueFromPipeline', 'ParameterSetName', 'Position')
+    $Attrib = [ordered]@{
+        'GW2Profile' = @{
+            'AttribType'                      = [string]
+            'Mandatory'                       = $false
+            'ValueFromPipelineByPropertyName' = $true
+            'Position'                        = 0
+            'ValidSet'                        = ([string[]]($ModConfig.Profiles.Keys))
+            'DefaultValue'                    = (Get-GW2DefaultProfile)
+        }
+    }
+    If ($IDType -or $IDMandatory) {
+        $Attrib.ID = @{
+            'AttribType'                      = [string[]]
+            'Mandatory'                       = $IDMandatory
+            'ValueFromPipelineByPropertyName' = $true
+            'ValueFromPipeline'               = $true
+            'Position'                        = 1
+            'Alias'                           = @('ids')
+        }
+        If ($IDType -ne 'id') {
+            $Attrib.ID.'Alias' += "$($IDType)ID" 
+        }
+    }
+    
+    ForEach ($AttribName in $Attrib.Keys) {
+        #[string]$AttribName = $Key.ToString()
+        $ThisAttrib = New-Object System.Management.Automation.ParameterAttribute
+        ForEach ($Prop in $StandardProps) {
+            If ($null -ne $Attrib.$AttribName.$Prop) {
+                $ThisAttrib.$Prop = $Attrib.$AttribName.$Prop
+            }
+        }
+        $ThisCollection = New-Object  System.Collections.ObjectModel.Collection[System.Attribute]
+        $ThisCollection.Add($ThisAttrib)
+
+        If ($Attrib.$AttribName.ValidSet) {
+            $ThisValidation = New-Object  System.Management.Automation.ValidateSetAttribute($Attrib.$AttribName.ValidSet)
+            $ThisCollection.Add($ThisValidation)
+        }
+
+        if ($Attrib.$AttribName.Alias) {
+            $ThisAlias = New-Object -Type `
+                System.Management.Automation.AliasAttribute -ArgumentList @($Attrib.$AttribName.Alias)
+            $ThisCollection.Add($ThisAlias)
+        }
+    
+        $ThisRuntimeParam = New-Object System.Management.Automation.RuntimeDefinedParameter($AttribName, $Attrib.$AttribName.AttribType, $ThisCollection)
+        If ($Attrib.$AttribName.DefaultValue) {
+            $ThisRuntimeParam.Value = $Attrib.$AttribName.DefaultValue
+        }
+        $RuntimeParamDic.Add($AttribName, $ThisRuntimeParam)
+    }
+
+    return  $RuntimeParamDic
+
+}
+
+Function CommParams {
+    @(
+        [parameter(ValueFromPipelineByPropertyName)]
+        [string]$GW2Profile=(Get-GW2DefaultProfile)
+    )
 }
 
 LoadConfig
