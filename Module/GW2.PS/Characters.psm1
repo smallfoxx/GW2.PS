@@ -131,16 +131,32 @@ Function Get-GW2Character {
         #>
     [cmdletbinding()]
     param(
-        [parameter(ValueFromPipeline, ValueFromPipelineByPropertyName)]
+        <#[parameter(ValueFromPipeline, ValueFromPipelineByPropertyName)]
         [Alias("Name", "CharacterName")]
         [string[]]$CharacterId,
-        [string]$GW2Profile = (Get-GW2DefaultProfile)
+        [string]$GW2Profile = (Get-GW2DefaultProfile)#>
     )
+    DynamicParam {
+        CommonGW2Parameters -IDType 'Character'     
+    }
+    Begin {
+        $CommParams = CommonGW2Parameters
+        Write-host "Right now its $GW2Profile"
+    }
     Process {
-        If ($CharacterId) {
-            Get-GW2CharacterCore -GW2Profile $GW2Profile -CharacterId $CharacterId
+        ForEach ($Comm in ($CommParams.Keys)) {
+            Set-Variable -Name $Comm -Value $PSBoundParameters.$Comm
+            If (-not [string]::IsNullOrEmpty((Get-Variable -Name $Comm))) {
+                Set-Variable -Name $Comm -Value $CommParams.$Comm.Value
+            }
+        }
+
+        If ($Id) {
+            Get-GW2CharacterCore -GW2Profile $GW2Profile -CharacterId $Id
         }
         else {
+            write-host "Get characters with $GW2Profile"
+            $PSBoundParameters | %{ write-host "boundParam: $($_.key)"}
             Get-GW2APIValue -APIValue "characters" -GW2Profile $GW2Profile 
         }
     }

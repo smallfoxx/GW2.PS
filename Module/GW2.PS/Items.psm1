@@ -82,7 +82,7 @@ Get the account/outfits from Guild Wars 2 API
     }
 }
 
-Function Get-GW2Skin {
+Function Get-GW2AccountSkin {
     <#
 .SYNOPSIS
 Get the account/skins from Guild Wars 2 API
@@ -186,6 +186,35 @@ Function Get-GW2Material {
         }
         else {
             Get-GW2APIValue -APIValue "materials" -GW2Profile $GW2Profile 
+        }
+    }
+}
+
+Function Get-GW2Skin {
+    <#
+    .SYNOPSIS
+    Get the skins/ from Guild Wars 2 API
+    #>
+    [cmdletbinding()]
+    param()
+    DynamicParam {
+        CommonGW2Parameters -IDType 'Skin'
+    }
+    Begin {
+        $CommParams = CommonGW2Parameters -IDType 'Skin'
+    }
+    Process {
+        ForEach ($Comm in ($CommParams.Keys)) {
+            write-debug "Setting param for $Comm"
+            Set-Variable -Name $Comm -Value $PSBoundParameters.$Comm
+            If (-not ((Get-Variable -Name $Comm).Value)) {
+                Set-Variable -Name $Comm -Value $CommParams.$Comm.Value
+            }
+        }
+        If ($ID) {
+            Get-GW2APIValue -APIValue "skins" -GW2Profile $GW2Profile -APIParams @{ 'ids' = $ID -join ',' }
+        } else {
+            Get-GW2APIValue -APIValue "skins" -GW2Profile $GW2Profile 
         }
     }
 }
