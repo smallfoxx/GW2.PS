@@ -71,24 +71,24 @@ PowerShellVersion = '5.1'
 
 # Modules to import as nested modules of the module specified in RootModule/ModuleToProcess
 NestedModules = @(
-    "CoreAPICalls.psm1",
-    "KeyManagement.psm1",
-    "ConfigManagement.psm1",
-    "Account.psm1",
-    "Achievements.psm1",
-    "Characters.psm1",
-    "Daily.psm1",
-    "Guild.psm1",
-    "HomeInstance.psm1",
-    "Items.psm1",
-    "Map.psm1",
-    "Mechanics.psm1",
-    "Miscellaneous.psm1",
-    "PvP.psm1",
-    "Story.psm1",
-    "Tradeskills.psm1",
-    "TradingPost.psm1",
-    "WvW.psm1"
+    "GW2.PS-CoreAPICalls.psm1",
+    "GW2.PS-KeyManagement.psm1",
+    "GW2.PS-ConfigManagement.psm1",
+    "GW2.PS-Account.psm1",
+    "GW2.PS-Achievements.psm1",
+    "GW2.PS-Characters.psm1",
+    "GW2.PS-Daily.psm1",
+    "GW2.PS-Guild.psm1",
+    "GW2.PS-HomeInstance.psm1",
+    "GW2.PS-Items.psm1",
+    "GW2.PS-Map.psm1",
+    "GW2.PS-Mechanics.psm1",
+    "GW2.PS-Miscellaneous.psm1",
+    "GW2.PS-PvP.psm1",
+    "GW2.PS-Story.psm1",
+    "GW2.PS-Tradeskills.psm1",
+    "GW2.PS-TradingPost.psm1",
+    "GW2.PS-WvW.psm1"
   )
 
 

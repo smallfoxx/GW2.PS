@@ -8,7 +8,7 @@ Function Get-GW2Guild {
         [string]$GW2Profile = (Get-GW2DefaultProfile),
         [parameter(ValueFromPipelineByPropertyName, ValueFromPipeline, Mandatory)]
         [Alias("id")]
-        [string]$GuildID
+        [object]$GuildID
     )
     Process {
         Get-GW2APIValue -APIValue "guild/$GuildID" -GW2Profile $GW2Profile 
@@ -176,6 +176,41 @@ Function Get-GW2GuildUpgrade {
     )
     Process {
         Get-GW2APIValue -APIValue "guild/upgrades" -GW2Profile $GW2Profile 
+    }
+}
+    
+Function Get-GW2GuildEmblem {
+    <#
+    .SYNOPSIS
+    Get the emblem/ from Guild Wars 2 API
+    #>
+    [cmdletbinding()]
+    param()
+    DynamicParam {
+        CommonGW2Parameters -IDType "Emblem"
+    }
+    Process {
+        $APIEndpoint = "emblem"
+        Get-GW2APIValue -APIValue $APIEndpoint @PSBoundParameters
+    }
+}
+
+Function Get-GW2GuildSearch {
+    <#
+    .SYNOPSIS
+    Get the guild/search from Guild Wars 2 API
+    #>
+    [cmdletbinding()]
+    param(
+        [parameter(ValueFromPipeline,ValueFromPipelineByPropertyName)]
+        [string]$Name
+    )
+    DynamicParam {
+        CommonGW2Parameters
+    }
+    Process {
+        $APIEndpoint = "guild/search"
+        Get-GW2APIValue -APIValue $APIEndpoint -APIParams @{ 'name' = $Name } @PSBoundParameters
     }
 }
     

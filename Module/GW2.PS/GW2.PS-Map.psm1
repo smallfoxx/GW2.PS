@@ -12,7 +12,7 @@ Function Get-GW2Dungeon {
     }
 }
     
-Function Get-GW2Mapchest {
+Function Get-GW2AccountMapchest {
     <#
     .SYNOPSIS
     Get the account/mapchests from Guild Wars 2 API
@@ -106,6 +106,38 @@ Function Get-GW2Map {
         else {
             Get-GW2APIValue -APIValue "maps" -GW2Profile $GW2Profile 
         }
+    }
+}
+
+Function Get-GW2Mapchest {
+    <#
+    .SYNOPSIS
+    Get the mapchests/ from Guild Wars 2 API
+    #>
+    [cmdletbinding()]
+    param()
+    DynamicParam {
+        CommonGW2Parameters -IDType "mapchests"
+    }
+    Process {
+        $APIEndpoint = "mapchests"
+        Get-GW2APIValue -APIValue $APIEndpoint @PSBoundParameters
+    }
+}
+
+Function Get-GW2Worldboss {
+    <#
+    .SYNOPSIS
+    Get the worldbosses/ from Guild Wars 2 API
+    #>
+    [cmdletbinding()]
+    param()
+    DynamicParam {
+        CommonGW2Parameters -IDType "Worldboss"
+    }
+    Process {
+        $APIEndpoint = "worldbosses"
+        Get-GW2APIValue -APIValue $APIEndpoint @PSBoundParameters
     }
 }
     

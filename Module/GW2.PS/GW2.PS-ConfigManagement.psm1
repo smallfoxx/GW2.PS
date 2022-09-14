@@ -169,8 +169,12 @@ Function NewGW2Function {
         }
     }
     
-    $FinalSection = $FunctionSections[-1]
-    $FunctionString = "Get-GW2$($FunctionSections -join '')"
+    If ($FunctionSections.count -gt 1) {
+        $FinalSection = $FunctionSections[-1]
+    } else {
+        $FinalSection = $FunctionSections
+    }
+    $FunctionString = "Get-GW2$($FunctionSections -join '')" -replace ":id",""
     $URIStub = ((@($Base) + $Subsection) -join "/").ToLower()
 
     @"
@@ -184,22 +188,9 @@ Get the $URIStub from Guild Wars 2 API
     DynamicParam {
         CommonGW2Parameters -IDType "$FinalSection"
     }
-    Begin {
-        `$CommParams = CommonGW2Parameters -IDType "$FinalSection"
-    }
     Process {
-        ForEach (`$Comm in (`$CommParams.Keys)) {
-            Set-Variable -Name `$Comm -Value `$PSBoundParameters.`$Comm
-            If (-not ((Get-Variable -Name `$Comm).Value)) {
-                Set-Variable -Name `$Comm -Value `$CommParams.`$Comm.Value
-            }
-        }
         `$APIEndpoint = "$URIStub"
-        If (`$ID) {
-            Get-GW2APIValue -APIValue `$APIEndpoint -GW2Profile `$GW2Profile -APIParams @{ 'ids' = (`$ID -join ',') }
-        } else {
-            Get-GW2APIValue -APIValue `$APIEndpoint -GW2Profile `$GW2Profile
-        }
+        Get-GW2APIValue -APIValue `$APIEndpoint @PSBoundParameters
     }
 }
 
@@ -208,20 +199,35 @@ Get the $URIStub from Guild Wars 2 API
 }
 
 Function BuildGW2Functions {
-    param($Bases = ((Get-GW2Base) -replace "^/v2/", "" ))
+    [cmdletbinding(DefaultParameterSetName="WebBase")]
+    param(
+        [parameter(ParameterSetName="WebBase")]
+        $Bases = ((Get-GW2Base) -replace "^/v2/", "" ),
+        [parameter(ParameterSetName="MissingAPIs",Mandatory)]
+        [switch]$Missing,
+        [parameter(ParameterSetName="MissingAPIs")]
+        [string]$MissingPath="C:\Repo\SmFx\GW2\PoShGW2\Module\GW2.PS\missingAPIs.txt"
+        )
 
-    ForEach ($Base in $Bases) {
-        $Sections = $Base -split '/'
-        $Root = $Sections[0]
-        If ($Sections.Length -gt 1) {
-            $Subs = $Sections[1..($Sections.Length - 1)]
+    Process {
+        if ($Missing) {
+            $MissingBases=Get-Content $MissingPath
+            BuildGW2Functions -Bases $MissingBases
+        } else {
+            ForEach ($Base in $Bases) {
+                $Sections = $Base -split '/'
+                $Root = $Sections[0]
+                If ($Sections.Length -gt 1) {
+                    $Subs = $Sections[1..($Sections.Length - 1)]
+                }
+                else {
+                    $Subs = $null
+                }
+                NewGW2Function -Base $Root -Subsection $Subs | Set-Clipboard
+                Write-Host "Function for $base on clipboard"
+                Pause
+            }
         }
-        else {
-            $Subs = $null
-        }
-        NewGW2Function -Base $Root -Subsection $Subs | Set-Clipboard
-        Write-Host "Function for $base on clipboard"
-        Pause
     }
 }
 

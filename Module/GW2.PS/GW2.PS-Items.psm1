@@ -213,9 +213,58 @@ Function Get-GW2Skin {
         }
         If ($ID) {
             Get-GW2APIValue -APIValue "skins" -GW2Profile $GW2Profile -APIParams @{ 'ids' = $ID -join ',' }
-        } else {
+        }
+        else {
             Get-GW2APIValue -APIValue "skins" -GW2Profile $GW2Profile 
         }
+    }
+}
+
+Function Get-GW2Legendaryarmory {
+    <#
+    .SYNOPSIS
+    Get the legendaryarmory/ from Guild Wars 2 API
+    #>
+    [cmdletbinding()]
+    param()
+    DynamicParam {
+        CommonGW2Parameters -IDType "Legendaryarmory"
+    }
+    Process {
+        $APIEndpoint = "legendaryarmory"
+        Get-GW2APIValue -APIValue $APIEndpoint @PSBoundParameters
+    }
+}
+
+Function Get-GW2HomeCat {
+    <#
+    .SYNOPSIS
+    Get the home/cats from Guild Wars 2 API
+    #>
+    [cmdletbinding()]
+    param()
+    DynamicParam {
+        CommonGW2Parameters -IDType "Cat"
+    }
+    Process {
+        $APIEndpoint = "home/cats"
+        Get-GW2APIValue -APIValue $APIEndpoint @PSBoundParameters
+    }
+}
+
+Function Get-GW2HomeNode {
+    <#
+    .SYNOPSIS
+    Get the home/nodes from Guild Wars 2 API
+    #>
+    [cmdletbinding()]
+    param()
+    DynamicParam {
+        CommonGW2Parameters -IDType "Node"
+    }
+    Process {
+        $APIEndpoint = "home/nodes"
+        Get-GW2APIValue -APIValue $APIEndpoint @PSBoundParameters
     }
 }
     

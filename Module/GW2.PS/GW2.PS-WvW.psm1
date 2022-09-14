@@ -117,3 +117,19 @@ Function Get-GW2WvwUpgrade {
     }
 }
     
+Function Get-GW2WvwMatch {
+    <#
+    .SYNOPSIS
+    Get the wvw/matches from Guild Wars 2 API
+    #>
+    [cmdletbinding()]
+    param()
+    DynamicParam {
+        CommonGW2Parameters -IDType "Match"
+    }
+    Process {
+        $APIEndpoint = "wvw/matches"
+        Get-GW2APIValue -APIValue $APIEndpoint @PSBoundParameters
+    }
+}
+        

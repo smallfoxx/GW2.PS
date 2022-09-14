@@ -157,27 +157,75 @@ Function Get-GW2World {
     .SYNOPSIS
     Get the worlds/ from Guild Wars 2 API
     #>
-        [cmdletbinding()]
-        param()
-        DynamicParam {
-            CommonGW2Parameters -IDType 'World'
+    [cmdletbinding()]
+    param()
+    DynamicParam {
+        CommonGW2Parameters -IDType 'World'
+    }
+    Begin {
+        $CommParams = CommonGW2Parameters -IDType 'World'
+    }
+    Process {
+        ForEach ($Comm in ($CommParams.Keys)) {
+            Set-Variable -Name $Comm -Value $PSBoundParameters.$Comm
+            If (-not ((Get-Variable -Name $Comm).Value)) {
+                Set-Variable -Name $Comm -Value $CommParams.$Comm.Value
+            }
         }
-        Begin {
-            $CommParams = CommonGW2Parameters -IDType 'World'
+        If ($ID) {
+            Get-GW2APIValue -APIValue "worlds" -GW2Profile $GW2Profile -APIParams @{ 'ids' = ($ID -join ',') }
         }
-        Process {
-            ForEach ($Comm in ($CommParams.Keys)) {
-                Set-Variable -Name $Comm -Value $PSBoundParameters.$Comm
-                If (-not ((Get-Variable -Name $Comm).Value)) {
-                    Set-Variable -Name $Comm -Value $CommParams.$Comm.Value
-                }
-            }
-            If ($ID) {
-                Get-GW2APIValue -APIValue "worlds" -GW2Profile $GW2Profile -APIParams @{ 'ids' = ($ID -join ',') }
-            }
-            else {
-                Get-GW2APIValue -APIValue "worlds" -GW2Profile $GW2Profile 
-            }
+        else {
+            Get-GW2APIValue -APIValue "worlds" -GW2Profile $GW2Profile 
         }
     }
+}
+
+Function Get-GW2Build {
+    <#
+    .SYNOPSIS
+    Get the build/ from Guild Wars 2 API
+    #>
+    [cmdletbinding()]
+    param()
+    DynamicParam {
+        CommonGW2Parameters -IDType "Build"
+    }
+    Process {
+        $APIEndpoint = "build"
+        Get-GW2APIValue -APIValue $APIEndpoint @PSBoundParameters
+    }
+}
+
+Function Get-GW2File {
+    <#
+    .SYNOPSIS
+    Get the files/ from Guild Wars 2 API
+    #>
+    [cmdletbinding()]
+    param()
+    DynamicParam {
+        CommonGW2Parameters -IDType "File"
+    }
+    Process {
+        $APIEndpoint = "files"
+        Get-GW2APIValue -APIValue $APIEndpoint @PSBoundParameters
+    }
+}
+
+Function Get-GW2Quaggan {
+    <#
+    .SYNOPSIS
+    Get the quaggans/ from Guild Wars 2 API
+    #>
+    [cmdletbinding()]
+    param()
+    DynamicParam {
+        CommonGW2Parameters -IDType "Quaggan"
+    }
+    Process {
+        $APIEndpoint = "quaggans"
+        Get-GW2APIValue -APIValue $APIEndpoint @PSBoundParameters
+    }
+}
     

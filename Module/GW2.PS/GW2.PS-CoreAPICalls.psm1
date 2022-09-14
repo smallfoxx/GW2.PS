@@ -51,6 +51,7 @@ Function InvokeGetAPI {
     )
 
     Process {
+        Write-Debug "Calling $URI with $Token {$($APIParams.keys | %{ ""$_=$($APIParams.$_ -join ',')"" })}"
         If ($PSVersionTable.PSVersion -ge "7.0") {
             Invoke-RestMethod -Method Get -Uri $URI -Authentication Bearer -Token $Token -Body $APIParams
         }
@@ -78,8 +79,11 @@ Get a value from the Guild Wars 2 APIv2
         [parameter(ParameterSetName = "ProfileName", Position = 0)]
         [string]$GW2Profile = (Get-GW2DefaultProfile),
         $APIValue = '',
+        [string[]]$ID,
         $APIParams = @{},
-        $APIBase = 'https://api.guildwars2.com/v2'
+        $APIBase = 'https://api.guildwars2.com/v2',
+        [parameter(ValueFromRemainingArguments)]
+        $ExtraArgs
     )
 
     Process {
@@ -91,6 +95,14 @@ Get a value from the Guild Wars 2 APIv2
         }
 
         $URI = "$APIBase/$APIValue"
+
+        If ($ID) {
+            If ($URI -match "^(?<before>.+):id(?<after>.*)") {
+                $URI = "{0}{1}{2}" -f $Matches.before,$ID[0],$Matches.after
+            } else {
+                $APIParams.ids += ($ID -join ',')
+            }
+        }
 
         $IsOversized = $false
         ForEach ($ParamName in ($APIParams.Keys)) {
