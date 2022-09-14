@@ -52,7 +52,7 @@ Import configuration details from file system and generate a default template if
                 }
             }
             #$BasicConfig | ConvertTo-Json | Set-Content -Path (ConfigPath)
-            $BasicConfig | Save-Config
+            $BasicConfig | Save-GW2Config
         }
         #$ConfigValue = (Get-Content (ConfigPath) | ConvertFrom-Json )
         $ConfigValue = Import-Clixml (ConfigPath) 
@@ -144,15 +144,14 @@ Function Set-GW2DefaultProfile {
     }
     Process {
         ForEach ($Comm in ($CommParams.Keys)) {
-            Set-Variable -Name $Comm -Value $PSBoundParameters.$Comm
+            Set-Variable -Name $Comm -Value ($PSBoundParameters.$Comm) -Scope 0
             If (-not [string]::IsNullOrEmpty((Get-Variable -Name $Comm))) {
-                Set-Variable -Name $Comm -Value $CommParams.$Comm.Value
+                Set-Variable -Name $Comm -Value $CommParams.$Comm.Value -Scope 0
             }
         }
         If ($GW2Profile) {
-            Write-Debug "Setting default profile to $GW2Profile"
+            Write-Debug "Setting default profile to $GW2Profile" 
             Set-GW2ConfigValue -SystemSetting -Name DefaultProfile -Value $GW2Profile
-            #Get-Variable
         }
     }
 }    
