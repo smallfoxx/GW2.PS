@@ -1,4 +1,4 @@
-Function Get-GW2Finisher {
+Function Get-GW2AccountFinisher {
     <#
     .SYNOPSIS
     Get the account/finisher from Guild Wars 2 API
@@ -8,7 +8,7 @@ Function Get-GW2Finisher {
         [string]$GW2Profile = (Get-GW2DefaultProfile)
     )
     Process {
-        Get-GW2APIValue -APIValue "account/finisher" -GW2Profile $GW2Profile 
+        Get-GW2APIValue -APIValue "account/finishers" -GW2Profile $GW2Profile 
     }
 }
 
@@ -32,19 +32,13 @@ Function Get-GW2PvpAmulet {
     Get the pvp/amulets from Guild Wars 2 API
     #>
     [cmdletbinding()]
-    param(
-        [string]$GW2Profile = (Get-GW2DefaultProfile),
-        [parameter(ValueFromPipelineByPropertyName, ValueFromPipeline)]
-        [Alias("id", "ids")]
-        [string[]]$AmuletID
-    )
+    param()
+    DynamicParam {
+        CommonGW2Parameters -IDType "Amulet"
+    }
     Process {
-        If ($AmuletID) {
-            Get-GW2APIValue -APIValue "pvp/amulets" -GW2Profile $GW2Profile -APIParams @{ 'ids' = ($AmuletID -join ',') }
-        }
-        else {
-            Get-GW2APIValue -APIValue "pvp/amulets" -GW2Profile $GW2Profile 
-        }
+        $APIEndpoint = "pvp/amulets"
+        Get-GW2APIValue -APIValue $APIEndpoint @PSBoundParameters
     }
 }
     
@@ -54,19 +48,13 @@ Function Get-GW2PvpGame {
     Get the pvp/games from Guild Wars 2 API
     #>
     [cmdletbinding()]
-    param(
-        [string]$GW2Profile = (Get-GW2DefaultProfile),
-        [parameter(ValueFromPipelineByPropertyName, ValueFromPipeline)]
-        [Alias("id", "ids")]
-        [string[]]$GameID
-    )
+    param()
+    DynamicParam {
+        CommonGW2Parameters -IDType "Game"
+    }
     Process {
-        If ($GameID) {
-            Get-GW2APIValue -APIValue "pvp/games" -GW2Profile $GW2Profile -APIParams @{ 'ids' = ($GameID -join ',') }
-        }
-        else {
-            Get-GW2APIValue -APIValue "pvp/games" -GW2Profile $GW2Profile 
-        }
+        $APIEndpoint = "pvp/games"
+        Get-GW2APIValue -APIValue $APIEndpoint @PSBoundParameters
     }
 }
 
@@ -76,19 +64,13 @@ Function Get-GW2PvpHero {
         Get the pvp/heroes from Guild Wars 2 API
         #>
     [cmdletbinding()]
-    param(
-        [string]$GW2Profile = (Get-GW2DefaultProfile),
-        [parameter(ValueFromPipelineByPropertyName, ValueFromPipeline)]
-        [Alias("id", "ids")]
-        [string[]]$HeroID
-    )
+    param()
+    DynamicParam {
+        CommonGW2Parameters -IDType "Hero"
+    }
     Process {
-        If ($HeroID) {
-            Get-GW2APIValue -APIValue "pvp/heroes" -GW2Profile $GW2Profile -APIParams @{ 'ids' = ($HeroID -join ',') }
-        }
-        else {
-            Get-GW2APIValue -APIValue "pvp/heroes" -GW2Profile $GW2Profile
-        }
+        $APIEndpoint = "pvp/heroes"
+        Get-GW2APIValue -APIValue $APIEndpoint @PSBoundParameters
     }
 }
 
@@ -98,19 +80,13 @@ Function Get-GW2PvpRank {
     Get the pvp/ranks from Guild Wars 2 API
     #>
     [cmdletbinding()]
-    param(
-        [string]$GW2Profile = (Get-GW2DefaultProfile),
-        [parameter(ValueFromPipelineByPropertyName, ValueFromPipeline)]
-        [Alias("id", "ids")]
-        [string[]]$RankID
-    )
+    param()
+    DynamicParam {
+        CommonGW2Parameters -IDType "Rank"
+    }
     Process {
-        If ($RankID) {
-            Get-GW2APIValue -APIValue "pvp/ranks" -GW2Profile $GW2Profile -APIParams @{ 'ids' = ($RankID -join ',') }
-        }
-        else {
-            Get-GW2APIValue -APIValue "pvp/ranks" -GW2Profile $GW2Profile 
-        }
+        $APIEndpoint = "pvp/ranks"
+        Get-GW2APIValue -APIValue $APIEndpoint @PSBoundParameters
     }
 }
 
@@ -120,19 +96,13 @@ Function Get-GW2PvpSeason {
     Get the pvp/seasons from Guild Wars 2 API
     #>
     [cmdletbinding()]
-    param(
-        [string]$GW2Profile = (Get-GW2DefaultProfile),
-        [parameter(ValueFromPipelineByPropertyName, ValueFromPipeline)]
-        [Alias("id", "ids")]
-        [string[]]$SeasonID
-    )
+    param()
+    DynamicParam {
+        CommonGW2Parameters -IDType "Season"
+    }
     Process {
-        If ($SeasonID) {
-            Get-GW2APIValue -APIValue "pvp/seasons" -GW2Profile $GW2Profile -APIParams @{ 'ids' = ($SeasonID -join ',') }
-        }
-        else {
-            Get-GW2APIValue -APIValue "pvp/seasons" -GW2Profile $GW2Profile 
-        }
+        $APIEndpoint = "pvp/seasons"
+        Get-GW2APIValue -APIValue $APIEndpoint @PSBoundParameters
     }
 }
 
@@ -142,19 +112,13 @@ Function Get-GW2PvpStanding {
     Get the pvp/standings from Guild Wars 2 API
     #>
     [cmdletbinding()]
-    param(
-        [string]$GW2Profile = (Get-GW2DefaultProfile),
-        [parameter(ValueFromPipelineByPropertyName, ValueFromPipeline)]
-        [Alias("id", "ids")]
-        [string[]]$StandingID
-    )
+    param()
+    DynamicParam {
+        CommonGW2Parameters -IDType "Standing"
+    }
     Process {
-        If ($StandingID) {
-            Get-GW2APIValue -APIValue "pvp/standings" -GW2Profile $GW2Profile -APIParams @{ 'ids' = ($StandingID -join ',') }
-        }
-        else {
-            Get-GW2APIValue -APIValue "pvp/standings" -GW2Profile $GW2Profile 
-        }
+        $APIEndpoint = "pvp/standings"
+        Get-GW2APIValue -APIValue $APIEndpoint @PSBoundParameters
     }
 }
 
@@ -164,39 +128,16 @@ Function Get-GW2PvpStat {
     Get the pvp/stats from Guild Wars 2 API
     #>
     [cmdletbinding()]
-    param(
-        [string]$GW2Profile = (Get-GW2DefaultProfile),
-        [parameter(ValueFromPipelineByPropertyName, ValueFromPipeline)]
-        [Alias("id", "ids")]
-        [string[]]$StatID
-    )
-    Process {
-        If ($StatID) {
-            Get-GW2APIValue -APIValue "pvp/stats" -GW2Profile $GW2Profile -APIParams @{ 'ids' = ($StatID -join ',') }
-        }
-        else {
-            Get-GW2APIValue -APIValue "pvp/stats" -GW2Profile $GW2Profile 
-        }
-    }
-}
-    
-Function Get-GW2Legend {
-    <#
-    .SYNOPSIS
-    Get the legends/ from Guild Wars 2 API
-    #>
-    [cmdletbinding()]
     param()
     DynamicParam {
-        CommonGW2Parameters -IDType "Legend"
+        CommonGW2Parameters -IDType "Stat"
     }
     Process {
-        $APIEndpoint = "legends"
-        write-debug "Calling $APIEndpint with ID $($id -join ',')..."
+        $APIEndpoint = "pvp/stats"
         Get-GW2APIValue -APIValue $APIEndpoint @PSBoundParameters
     }
 }
-
+    
 Function Get-GW2PvpSeasonLeaderboard {
     <#
     .SYNOPSIS

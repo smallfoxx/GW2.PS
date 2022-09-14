@@ -139,26 +139,8 @@ Function Get-GW2Character {
     DynamicParam {
         CommonGW2Parameters -IDType 'Character'     
     }
-    Begin {
-        $CommParams = CommonGW2Parameters
-        Write-host "Right now its $GW2Profile"
-    }
     Process {
-        ForEach ($Comm in ($CommParams.Keys)) {
-            Set-Variable -Name $Comm -Value $PSBoundParameters.$Comm
-            If (-not [string]::IsNullOrEmpty((Get-Variable -Name $Comm))) {
-                Set-Variable -Name $Comm -Value $CommParams.$Comm.Value
-            }
-        }
-
-        If ($Id) {
-            Get-GW2CharacterCore -GW2Profile $GW2Profile -CharacterId $Id
-        }
-        else {
-            write-host "Get characters with $GW2Profile"
-            $PSBoundParameters | % { write-host "boundParam: $($_.key)" }
-            Get-GW2APIValue -APIValue "characters" -GW2Profile $GW2Profile 
-        }
+        Get-GW2APIValue -APIValue "characters" @PSBoundParameters 
     }
 }
 
@@ -169,15 +151,14 @@ Function Get-GW2CharacterBackstory {
             #>
     [cmdletbinding()]
     param(
-        [parameter(ValueFromPipeline, ValueFromPipelineByPropertyName)]
-        [Alias("Name", "CharacterName")]
-        [string[]]$CharacterId,
-        [string]$GW2Profile = (Get-GW2DefaultProfile)
     )
+    DynamicParam {
+        CommonGW2Parameters -IDType 'Character'     
+    }
     Process {
-        ForEach ($i in $CharacterId) {
-            Get-GW2APIValue -APIValue "characters/$i/backstory" -GW2Profile $GW2Profile 
-        }
+        #ForEach ($i in $CharacterId) {
+        Get-GW2APIValue -APIValue "characters/:id/backstory" @PSBoundParameters 
+        #}
     }
 }
             
@@ -188,27 +169,24 @@ Function Get-GW2CharacterBuildtab {
     #>
     [cmdletbinding()]
     param(
-        [parameter(ValueFromPipeline, ValueFromPipelineByPropertyName, Mandatory)]
-        [Alias("Name", "CharacterName")]
-        [string[]]$CharacterId,
         [parameter(ValueFromPipelineByPropertyName)]
         [string[]]$TabId,
-        [switch]$All,
-        [string]$GW2Profile = (Get-GW2DefaultProfile)
+        [switch]$All
     )
+    DynamicParam {
+        CommonGW2Parameters -IDType 'Character' -IDMandatory 
+    }
     Process {
-        ForEach ($i in $CharacterId) {
-            If ($All) {
-                Get-GW2APIValue -APIValue "characters/$i/buildtabs" -GW2Profile $GW2Profile -APIParams @{ "tabs" = "all" }
+        If ($All) {
+            Get-GW2APIValue -APIValue "characters/:id/buildtabs" -APIParams @{ "tabs" = "all" } @PSBoundParameters | Add-Member NoteProperty CharacterID ($PSBoundParameters.ID)  -PassThru
+        }
+        elseif ($TabId) {
+            ForEach ($tab in $TabId) {
+                Get-GW2APIValue -APIValue "characters/:id/buildtabs" -APIParams @{ "tabs" = "$tab" } @PSBoundParameters  | Add-Member NoteProperty CharacterID ($PSBoundParameters.ID)  -PassThru
             }
-            elseif ($TabId) {
-                ForEach ($tab in $TabId) {
-                    Get-GW2APIValue -APIValue "characters/$i/buildtabs" -GW2Profile $GW2Profile -APIParams @{ "tab" = "$tab" }
-                }
-            }
-            else {
-                Get-GW2APIValue -APIValue "characters/$i/buildtabs" -GW2Profile $GW2Profile
-            }
+        }
+        else {
+            Get-GW2APIValue -APIValue "characters/:id/buildtabs" @PSBoundParameters  | ForEach-Object { [PSCustomObject]@{ "Name" = $PSBoundParameters.ID; "TabID" = $_ } }#-APIParams @{ "tabs" = "all" }
         }
     }
 }
@@ -220,15 +198,12 @@ Function Get-GW2CharacterBuildtabActive {
     #>
     [cmdletbinding()]
     param(
-        [parameter(ValueFromPipeline, ValueFromPipelineByPropertyName, Mandatory)]
-        [Alias("Name", "CharacterName")]
-        [string[]]$CharacterId,
-        [string]$GW2Profile = (Get-GW2DefaultProfile)
     )
+    DynamicParam {
+        CommonGW2Parameters -IDType 'Character' -IDMandatory 
+    }
     Process {
-        ForEach ($i in $CharacterId) {
-            Get-GW2APIValue -APIValue "characters/$i/buildtabs/active" -GW2Profile $GW2Profile 
-        }
+        Get-GW2APIValue -APIValue "characters/:id/buildtabs/active" @PSBoundParameters 
     }
 }
 
@@ -239,15 +214,12 @@ Function Get-GW2CharacterCore {
         #>
     [cmdletbinding()]
     param(
-        [parameter(ValueFromPipeline, ValueFromPipelineByPropertyName, Mandatory)]
-        [Alias("Name", "CharacterName")]
-        [string[]]$CharacterId,
-        [string]$GW2Profile = (Get-GW2DefaultProfile)
     )
+    DynamicParam {
+        CommonGW2Parameters -IDType 'Character' -IDMandatory 
+    }
     Process {
-        ForEach ($i in $CharacterId) {
-            Get-GW2APIValue -APIValue "characters/$i/core" -GW2Profile $GW2Profile 
-        }
+        Get-GW2APIValue -APIValue "characters/:id/core" @PSBoundParameters
     }
 }
 
@@ -258,16 +230,14 @@ Function Get-GW2CharacterCrafting {
     #>
     [cmdletbinding()]
     param(
-        [parameter(ValueFromPipeline, ValueFromPipelineByPropertyName, Mandatory)]
-        [Alias("Name", "CharacterName")]
-        [string[]]$CharacterId,
-        [string]$GW2Profile = (Get-GW2DefaultProfile)
     )
-    Process {
-        ForEach ($i in $CharacterId) {
-            Get-GW2APIValue -APIValue "characters/$i/crafting" -GW2Profile $GW2Profile 
-        }
+    DynamicParam {
+        CommonGW2Parameters -IDType 'Character' -IDMandatory 
     }
+    Process {
+        Get-GW2APIValue -APIValue "characters/:id/crafting" @PSBoundParameters 
+    }
+    
 }
 
 Function Get-GW2CharacterEquipment {
@@ -277,15 +247,12 @@ Function Get-GW2CharacterEquipment {
     #>
     [cmdletbinding()]
     param(
-        [parameter(ValueFromPipeline, ValueFromPipelineByPropertyName, Mandatory)]
-        [Alias("Name", "CharacterName")]
-        [string[]]$CharacterId,
-        [string]$GW2Profile = (Get-GW2DefaultProfile)
     )
+    DynamicParam {
+        CommonGW2Parameters -IDType 'Character' -IDMandatory 
+    }
     Process {
-        ForEach ($i in $CharacterId) {
-            Get-GW2APIValue -APIValue "characters/$i/equipment" -GW2Profile $GW2Profile 
-        }
+        Get-GW2APIValue -APIValue "characters/:id/equipment" @PSBoundParameters
     }
 }
     
@@ -296,15 +263,12 @@ Function Get-GW2CharacterEquipmenttab {
 #>
     [cmdletbinding()]
     param(
-        [parameter(ValueFromPipeline, ValueFromPipelineByPropertyName, Mandatory)]
-        [Alias("Name", "CharacterName")]
-        [string[]]$CharacterId,
-        [string]$GW2Profile = (Get-GW2DefaultProfile)
     )
+    DynamicParam {
+        CommonGW2Parameters -IDType 'Character' -IDMandatory 
+    }
     Process {
-        ForEach ($i in $CharacterId) {
-            Get-GW2APIValue -APIValue "characters/$i/equipmenttabs" -GW2Profile $GW2Profile 
-        }
+        Get-GW2APIValue -APIValue "characters/:id/equipmenttabs" @PSBoundParameters
     }
 }
         
@@ -315,15 +279,12 @@ Function Get-GW2CharacterEquipmenttabActive {
 #>
     [cmdletbinding()]
     param(
-        [parameter(ValueFromPipeline, ValueFromPipelineByPropertyName, Mandatory)]
-        [Alias("Name", "CharacterName")]
-        [string[]]$CharacterId,
-        [string]$GW2Profile = (Get-GW2DefaultProfile)
     )
+    DynamicParam {
+        CommonGW2Parameters -IDType 'Character' -IDMandatory 
+    }
     Process {
-        ForEach ($i in $CharacterId) {
-            Get-GW2APIValue -APIValue "characters/$i/equipmenttabs/active" -GW2Profile $GW2Profile 
-        }
+        Get-GW2APIValue -APIValue "characters/:id/equipmenttabs/active" @PSBoundParameters
     }
 }
 
@@ -334,15 +295,12 @@ Function Get-GW2CharacterHeropoint {
     #>
     [cmdletbinding()]
     param(
-        [parameter(ValueFromPipeline, ValueFromPipelineByPropertyName, Mandatory)]
-        [Alias("Name", "CharacterName")]
-        [string[]]$CharacterId,
-        [string]$GW2Profile = (Get-GW2DefaultProfile)
     )
+    DynamicParam {
+        CommonGW2Parameters -IDType 'Character' -IDMandatory 
+    }
     Process {
-        ForEach ($i in $CharacterId) {
-            Get-GW2APIValue -APIValue "characters/$i/heropoints" -GW2Profile $GW2Profile 
-        }
+        Get-GW2APIValue -APIValue "characters/:id/heropoints" @PSBoundParameters
     }
 }
 
@@ -353,15 +311,12 @@ Function Get-GW2CharacterInventory {
 #>
     [cmdletbinding()]
     param(
-        [parameter(ValueFromPipeline, ValueFromPipelineByPropertyName, Mandatory)]
-        [Alias("Name", "CharacterName")]
-        [string[]]$CharacterId,
-        [string]$GW2Profile = (Get-GW2DefaultProfile)
     )
+    DynamicParam {
+        CommonGW2Parameters -IDType 'Character' -IDMandatory 
+    }
     Process {
-        ForEach ($i in $CharacterId) {
-            Get-GW2APIValue -APIValue "characters/$i/inventory" -GW2Profile $GW2Profile 
-        }
+        Get-GW2APIValue -APIValue "characters/:id/inventory" @PSBoundParameters 
     }
 }
         
@@ -372,15 +327,12 @@ Function Get-GW2CharacterQuest {
 #>
     [cmdletbinding()]
     param(
-        [parameter(ValueFromPipeline, ValueFromPipelineByPropertyName, Mandatory)]
-        [Alias("Name", "CharacterName")]
-        [string[]]$CharacterId,
-        [string]$GW2Profile = (Get-GW2DefaultProfile)
     )
+    DynamicParam {
+        CommonGW2Parameters -IDType 'Character' -IDMandatory 
+    }
     Process {
-        ForEach ($i in $CharacterId) {
-            Get-GW2APIValue -APIValue "characters/$i/quests" -GW2Profile $GW2Profile 
-        }
+        Get-GW2APIValue -APIValue "characters/:id/quests" @PSBoundParameters
     }
 }
 
@@ -391,15 +343,13 @@ Function Get-GW2CharacterRecipe {
 #>
     [cmdletbinding()]
     param(
-        [parameter(ValueFromPipeline, ValueFromPipelineByPropertyName, Mandatory)]
-        [Alias("Name", "CharacterName")]
-        [string[]]$CharacterId,
-        [string]$GW2Profile = (Get-GW2DefaultProfile)
     )
+    DynamicParam {
+        CommonGW2Parameters -IDType 'Character' -IDMandatory 
+    }
     Process {
-        ForEach ($i in $CharacterId) {
-            Get-GW2APIValue -APIValue "characters/$i/recipes" -GW2Profile $GW2Profile 
-        }
+        Get-GW2APIValue -APIValue "characters/:id/recipes" @PSBoundParameters
+        
     }
 }
 
@@ -410,15 +360,12 @@ Function Get-GW2CharacterSab {
 #>
     [cmdletbinding()]
     param(
-        [parameter(ValueFromPipeline, ValueFromPipelineByPropertyName, Mandatory)]
-        [Alias("Name", "CharacterName")]
-        [string[]]$CharacterId,
-        [string]$GW2Profile = (Get-GW2DefaultProfile)
     )
+    DynamicParam {
+        CommonGW2Parameters -IDType 'Character' -IDMandatory 
+    }
     Process {
-        ForEach ($i in $CharacterId) {
-            Get-GW2APIValue -APIValue "characters/$i/sab" -GW2Profile $GW2Profile 
-        }
+        Get-GW2APIValue -APIValue "characters/:id/sab" @PSBoundParameters
     }
 }
                     
@@ -429,15 +376,12 @@ Function Get-GW2CharacterSkill {
                         #>
     [cmdletbinding()]
     param(
-        [parameter(ValueFromPipeline, ValueFromPipelineByPropertyName, Mandatory)]
-        [Alias("Name", "CharacterName")]
-        [string[]]$CharacterId,
-        [string]$GW2Profile = (Get-GW2DefaultProfile)
     )
+    DynamicParam {
+        CommonGW2Parameters -IDType 'Character' -IDMandatory 
+    }
     Process {
-        ForEach ($i in $CharacterId) {
-            Get-GW2APIValue -APIValue "characters/$i/skills" -GW2Profile $GW2Profile 
-        }
+        Get-GW2APIValue -APIValue "characters/:id/skills" @PSBoundParameters
     }
 }
 
@@ -448,15 +392,12 @@ Function Get-GW2CharacterSpecialization {
                             #>
     [cmdletbinding()]
     param(
-        [parameter(ValueFromPipeline, ValueFromPipelineByPropertyName, Mandatory)]
-        [Alias("Name", "CharacterName")]
-        [string[]]$CharacterId,
-        [string]$GW2Profile = (Get-GW2DefaultProfile)
     )
+    DynamicParam {
+        CommonGW2Parameters -IDType 'Character' -IDMandatory 
+    }
     Process {
-        ForEach ($i in $CharacterId) {
-            Get-GW2APIValue -APIValue "characters/$i/specializations" -GW2Profile $GW2Profile 
-        }
+        Get-GW2APIValue -APIValue "characters/:id/specializations" @PSBoundParameters 
     }
 }
 
@@ -467,40 +408,13 @@ Function Get-GW2CharacterTraining {
                                 #>
     [cmdletbinding()]
     param(
-        [parameter(ValueFromPipeline, ValueFromPipelineByPropertyName, Mandatory)]
-        [Alias("Name", "CharacterName")]
-        [string[]]$CharacterId,
-        [string]$GW2Profile = (Get-GW2DefaultProfile)
     )
+    DynamicParam {
+        CommonGW2Parameters -IDType 'Character' -IDMandatory 
+    }
     Process {
-        ForEach ($i in $CharacterId) {
-            Get-GW2APIValue -APIValue "characters/$i/training" -GW2Profile $GW2Profile 
-        }
+        Get-GW2APIValue -APIValue "characters/:id/training" @PSBoundParameters 
     }
 }
                                 
-Function Get-GW2Tokeninfo {
-    <#
-    .SYNOPSIS
-    Get the tokeninfo/ from Guild Wars 2 API
-    #>
-    [cmdletbinding()]
-    param()
-    DynamicParam {
-        CommonGW2Parameters
-    }
-    Begin {
-        $CommParams = CommonGW2Parameters
-    }
-    Process {
-        ForEach ($Comm in ($CommParams.Keys)) {
-            Set-Variable -Name $Comm -Value $PSBoundParameters.$Comm
-            If (-not ((Get-Variable -Name $Comm).Value)) {
-                Set-Variable -Name $Comm -Value $CommParams.$Comm.Value
-            }
-        }
-        Get-GW2APIValue -APIValue "tokeninfo" -GW2Profile $GW2Profile 
-    }
-}
-    
-            
+         

@@ -248,19 +248,19 @@ Specifies that function calling this uses ID parameters
             'AttribType'                      = [string]
             'Mandatory'                       = $false
             'ValueFromPipelineByPropertyName' = $true
-            'Position'                        = 0
+            'Position'                        = 1
             'ValidSet'                        = ([string[]]($ModConfig.Profiles.Keys))
             'DefaultValue'                    = (Get-GW2DefaultProfile)
         }
     }
     If ($IDType -or $IDMandatory) {
         $Attrib.ID = @{
-            'AttribType'                      = [string[]]
+            'AttribType'                      = [string]
             'Mandatory'                       = $IDMandatory
             'ValueFromPipelineByPropertyName' = $true
             'ValueFromPipeline'               = $true
-            'Position'                        = 1
-            'Alias'                           = @('ids')
+            'Position'                        = 0
+            'Alias'                           = @('ids','name')
         }
         If ($IDType -ne 'id') {
             $Attrib.ID.'Alias' += "$($IDType)ID" 

@@ -726,6 +726,22 @@ Function Get-GW2AccountWorldboss {
         Get-GW2APIValue -APIValue $APIEndpoint @PSBoundParameters
     }
 }
+Function Get-GW2Tokeninfo {
+    <#
+    .SYNOPSIS
+    Get the tokeninfo/ from Guild Wars 2 API
+    #>
+    [cmdletbinding()]
+    param()
+    DynamicParam {
+        CommonGW2Parameters
+    }
+    Process {
+        $APIEndpoint = "tokeninfo"
+        Get-GW2APIValue -APIValue $APIEndpoint @PSBoundParameters
+    }
+}
+
 
 
 Set-Alias -Name ign -Value Get-GW2IGN

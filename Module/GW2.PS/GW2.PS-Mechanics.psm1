@@ -4,28 +4,13 @@ Function Get-GW2Mastery {
     Get the masteries from Guild Wars 2 API
     #>
     [cmdletbinding()]
-    param(
-        [string]$GW2Profile = (Get-GW2DefaultProfile),
-        [parameter(ValueFromPipelineByPropertyName, ValueFromPipeline)]
-        [Alias("id", "ids")]
-        [string[]]$MasteryID
-    )
-    Begin {
-        $Masteries = @()
+    param()
+    DynamicParam {
+        CommonGW2Parameters -IDType "Mastery"
     }
     Process {
-        If ($MasteryID) {
-            $Masteries += $MasteryID
-        }
-    }
-    End {
-        If ($Masteries.Length -gt 0) {
-            Write-Debug "Looking up masteries: $($Masteries -join ',')"
-            Get-GW2APIValue -APIValue "masteries" -GW2Profile $GW2Profile -APIParams @{ 'ids' = ($Masteries -join ',') }
-        }
-        else {
-            Get-GW2APIValue -APIValue "masteries" -GW2Profile $GW2Profile 
-        }
+        $APIEndpoint = "masteries"
+        Get-GW2APIValue -APIValue $APIEndpoint @PSBoundParameters
     }
 }
     
@@ -35,19 +20,13 @@ Function Get-GW2MountSkin {
     Get the mounts/skins from Guild Wars 2 API
     #>
     [cmdletbinding()]
-    param(
-        [string]$GW2Profile = (Get-GW2DefaultProfile),
-        [parameter(ValueFromPipelineByPropertyName, ValueFromPipeline)]
-        [Alias("id", "ids")]
-        [string[]]$SkinID
-    )
+    param()
+    DynamicParam {
+        CommonGW2Parameters -IDType "Skin"
+    }
     Process {
-        If ($SkinID) {
-            Get-GW2APIValue -APIValue "mounts/skins" -GW2Profile $GW2Profile -APIParams @{ 'ids' = ($SkinID -join ',') }
-        }
-        else {
-            Get-GW2APIValue -APIValue "mounts/skins" -GW2Profile $GW2Profile 
-        }
+        $APIEndpoint = "mounts/skins"
+        Get-GW2APIValue -APIValue $APIEndpoint @PSBoundParameters
     }
 }
 
@@ -57,19 +36,13 @@ Function Get-GW2MountType {
     Get the mounts/types from Guild Wars 2 API
     #>
     [cmdletbinding()]
-    param(
-        [string]$GW2Profile = (Get-GW2DefaultProfile),
-        [parameter(ValueFromPipelineByPropertyName, ValueFromPipeline)]
-        [Alias("id", "ids")]
-        [string[]]$TypeID
-    )
+    param()
+    DynamicParam {
+        CommonGW2Parameters -IDType "Type"
+    }
     Process {
-        If ($TypeID) {
-            Get-GW2APIValue -APIValue "mounts/types" -GW2Profile $GW2Profile -APIParams @{ 'ids' = ($TypeID -join ',') }
-        }
-        else {
-            Get-GW2APIValue -APIValue "mounts/types" -GW2Profile $GW2Profile 
-        }
+        $APIEndpoint = "mounts/types"
+        Get-GW2APIValue -APIValue $APIEndpoint @PSBoundParameters
     }
 }
     
@@ -79,19 +52,13 @@ Function Get-GW2Outfit {
     Get the outfits/ from Guild Wars 2 API
     #>
     [cmdletbinding()]
-    param(
-        [string]$GW2Profile = (Get-GW2DefaultProfile),
-        [parameter(ValueFromPipelineByPropertyName, ValueFromPipeline)]
-        [Alias("id", "ids")]
-        [string[]]$OutfitID
-    )
+    param()
+    DynamicParam {
+        CommonGW2Parameters -IDType "Outfit"
+    }
     Process {
-        If ($OutfitID) {
-            Get-GW2APIValue -APIValue "outfits" -GW2Profile $GW2Profile -APIParams @{ 'ids' = ($OutfitID -join ',') }
-        }
-        else {
-            Get-GW2APIValue -APIValue "outfits" -GW2Profile $GW2Profile 
-        }
+        $APIEndpoint = "outfits"
+        Get-GW2APIValue -APIValue $APIEndpoint @PSBoundParameters
     }
 }
 
@@ -101,19 +68,13 @@ Function Get-GW2Pet {
         Get the novelties from Guild Wars 2 API
         #>
     [cmdletbinding()]
-    param(
-        [string]$GW2Profile = (Get-GW2DefaultProfile),
-        [parameter(ValueFromPipelineByPropertyName, ValueFromPipeline)]
-        [Alias("id", "ids")]
-        [string[]]$PetID
-    )
+    param()
+    DynamicParam {
+        CommonGW2Parameters -IDType "Pet"
+    }
     Process {
-        If ($PetID) {
-            Get-GW2APIValue -APIValue "pets" -GW2Profile $GW2Profile -APIParams @{ 'ids' = ($PetID -join ',') }
-        }
-        else {
-            Get-GW2APIValue -APIValue "pets" -GW2Profile $GW2Profile 
-        }
+        $APIEndpoint = "pets"
+        Get-GW2APIValue -APIValue $APIEndpoint @PSBoundParameters
     }
 }
 
@@ -123,19 +84,13 @@ Function Get-GW2Profession {
     Get the professions from Guild Wars 2 API
     #>
     [cmdletbinding()]
-    param(
-        [string]$GW2Profile = (Get-GW2DefaultProfile),
-        [parameter(ValueFromPipelineByPropertyName, ValueFromPipeline)]
-        [Alias("id", "ids")]
-        [string[]]$ProfessionID
-    )
+    param()
+    DynamicParam {
+        CommonGW2Parameters -IDType "Profession"
+    }
     Process {
-        If ($ProfessionID) {
-            Get-GW2APIValue -APIValue "professions" -GW2Profile $GW2Profile -APIParams @{ 'ids' = ($ProfessionID -join ',') }
-        }
-        else {
-            Get-GW2APIValue -APIValue "professions" -GW2Profile $GW2Profile 
-        }
+        $APIEndpoint = "professions"
+        Get-GW2APIValue -APIValue $APIEndpoint @PSBoundParameters
     }
 }
 
@@ -145,19 +100,13 @@ Function Get-GW2Race {
     Get the races/ from Guild Wars 2 API
     #>
     [cmdletbinding()]
-    param(
-        [string]$GW2Profile = (Get-GW2DefaultProfile),
-        [parameter(ValueFromPipelineByPropertyName, ValueFromPipeline)]
-        [Alias("id", "ids", "race")]
-        [string[]]$RaceID
-    )
+    param()
+    DynamicParam {
+        CommonGW2Parameters -IDType "Race"
+    }
     Process {
-        If ($RaceID) {
-            Get-GW2APIValue -APIValue "professions" -GW2Profile $GW2Profile -APIParams @{ 'ids' = ($RaceID -join ',') }
-        }
-        else {
-            Get-GW2APIValue -APIValue "races" -GW2Profile $GW2Profile 
-        }
+        $APIEndpoint = "races"
+        Get-GW2APIValue -APIValue $APIEndpoint @PSBoundParameters
     }
 }
 
@@ -171,24 +120,10 @@ Function Get-GW2Skill {
     DynamicParam {
         CommonGW2Parameters -IDType 'Skill'
     }
-    Begin {
-        $CommParams = CommonGW2Parameters -IDType 'Skill'
-    }
     Process {
-        ForEach ($Comm in ($CommParams.Keys)) {
-            Write-debug "Setting var $Comm ($([string]($PSBoundParameters.$comm))) [$([string]($CommParams.$comm.Value))]"
-            Set-Variable -Name $Comm -Value $PSBoundParameters.$Comm 
-            If (-not ((Get-Variable -Name $Comm).Value)) {
-                Set-Variable -Name $Comm -Value $CommParams.$Comm.Value
-            }
-        }
-        write-debug "Calling $GW2Profile and $($ID -join ',') [$($PSBoundParameters.ID -join ',')]"
-        If ($ID) {
-            Get-GW2APIValue -APIValue "skills" -GW2Profile $GW2Profile -APIParams @{ 'ids' = ($ID -join ',') }
-        }
-        else {
-            Get-GW2APIValue -APIValue "skills" -GW2Profile $GW2Profile
-        }
+        $APIEndpoint = "skills"
+        write-debug "Calling $APIEndpint with ID $($id -join ',')..."
+        Get-GW2APIValue -APIValue $APIEndpoint @PSBoundParameters
     }
 }
 
@@ -200,24 +135,12 @@ Function Get-GW2Specialization {
     [cmdletbinding()]
     param()
     DynamicParam {
-        CommonGW2Parameters
-    }
-    Begin {
-        $CommParams = CommonGW2Parameters
+        CommonGW2Parameters -IDType 'Specialization'
     }
     Process {
-        ForEach ($Comm in ($CommParams.Keys)) {
-            Set-Variable -Name $Comm -Value $PSBoundParameters.$Comm
-            If (-not ((Get-Variable -Name $Comm).Value)) {
-                Set-Variable -Name $Comm -Value $CommParams.$Comm.Value
-            }
-        }
-        If ($ID) {
-            Get-GW2APIValue -APIValue "specializations" -GW2Profile $GW2Profile -APIParams @{ 'ids' = ($ID -join ',') }
-        }
-        else {
-            Get-GW2APIValue -APIValue "specializations" -GW2Profile $GW2Profile 
-        }
+        $APIEndpoint = "specializations"
+        write-debug "Calling $APIEndpint with ID $($id -join ',')..."
+        Get-GW2APIValue -APIValue $APIEndpoint @PSBoundParameters
     }
 }
 
@@ -249,6 +172,24 @@ Function Get-GW2Trait {
         }
     }
 }
+
+Function Get-GW2Legend {
+    <#
+    .SYNOPSIS
+    Get the legends/ from Guild Wars 2 API
+    #>
+    [cmdletbinding()]
+    param()
+    DynamicParam {
+        CommonGW2Parameters -IDType "Legend"
+    }
+    Process {
+        $APIEndpoint = "legends"
+        write-debug "Calling $APIEndpint with ID $($id -join ',')..."
+        Get-GW2APIValue -APIValue $APIEndpoint @PSBoundParameters
+    }
+}
+
 
 <#
 Function Get-GW2Mount {

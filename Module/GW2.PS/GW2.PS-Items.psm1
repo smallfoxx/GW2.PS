@@ -116,11 +116,13 @@ Function Get-GW2Finisher {
     Get the finishers from Guild Wars 2 API
     #>
     [cmdletbinding()]
-    param(
-        [string]$GW2Profile = (Get-GW2DefaultProfile)
-    )
+    param()
+    DynamicParam {
+        CommonGW2Parameters -IDType "Finisher"
+    }
     Process {
-        Get-GW2APIValue -APIValue "finishers" -GW2Profile $GW2Profile 
+        $APIEndpoint = "finishers"
+        Get-GW2APIValue -APIValue $APIEndpoint @PSBoundParameters
     }
 }
 
@@ -130,19 +132,13 @@ Function Get-GW2Item {
     Get the items from Guild Wars 2 API
     #>
     [cmdletbinding()]
-    param(
-        [string]$GW2Profile = (Get-GW2DefaultProfile),
-        [parameter(ValueFromPipelineByPropertyName, ValueFromPipeline)]
-        [Alias("id", "ids")]
-        [string[]]$ItemID
-    )
+    param()
+    DynamicParam {
+        CommonGW2Parameters -IDType "Item"
+    }
     Process {
-        If ($ItemID) {
-            Get-GW2APIValue -APIValue "items" -GW2Profile $GW2Profile -APIParams @{ 'ids' = ($ItemID -join ',') }
-        }
-        else {
-            Get-GW2APIValue -APIValue "items" -GW2Profile $GW2Profile 
-        }
+        $APIEndpoint = "items"
+        Get-GW2APIValue -APIValue $APIEndpoint @PSBoundParameters
     }
 }
     
@@ -152,19 +148,13 @@ Function Get-GW2ItemStat {
     Get the itemstats from Guild Wars 2 API
     #>
     [cmdletbinding()]
-    param(
-        [string]$GW2Profile = (Get-GW2DefaultProfile),
-        [parameter(ValueFromPipelineByPropertyName, ValueFromPipeline)]
-        [Alias("id", "ids")]
-        [string[]]$StatsID
-    )
+    param()
+    DynamicParam {
+        CommonGW2Parameters -IDType "Stat"
+    }
     Process {
-        If ($StatsID) {
-            Get-GW2APIValue -APIValue "itemstats" -GW2Profile $GW2Profile -APIParams @{ 'ids' = ($StatsID -join ',') }
-        }
-        else {
-            Get-GW2APIValue -APIValue "itemstats" -GW2Profile $GW2Profile 
-        }
+        $APIEndpoint = "itemstats"
+        Get-GW2APIValue -APIValue $APIEndpoint @PSBoundParameters
     }
 }
     
@@ -174,19 +164,13 @@ Function Get-GW2Material {
     Get the materials/ from Guild Wars 2 API
     #>
     [cmdletbinding()]
-    param(
-        [string]$GW2Profile = (Get-GW2DefaultProfile),
-        [parameter(ValueFromPipelineByPropertyName, ValueFromPipeline)]
-        [Alias("id", "ids")]
-        [string[]]$MaterialID
-    )
+    param()
+    DynamicParam {
+        CommonGW2Parameters -IDType "Material"
+    }
     Process {
-        If ($MaterialID) {
-            Get-GW2APIValue -APIValue "materials" -GW2Profile $GW2Profile -APIParams @{ 'ids' = ($MaterialID -join ',') }
-        }
-        else {
-            Get-GW2APIValue -APIValue "materials" -GW2Profile $GW2Profile 
-        }
+        $APIEndpoint = "materials"
+        Get-GW2APIValue -APIValue $APIEndpoint @PSBoundParameters
     }
 }
 
@@ -198,29 +182,15 @@ Function Get-GW2Skin {
     [cmdletbinding()]
     param()
     DynamicParam {
-        CommonGW2Parameters -IDType 'Skin'
-    }
-    Begin {
-        $CommParams = CommonGW2Parameters -IDType 'Skin'
+        CommonGW2Parameters -IDType "Skin"
     }
     Process {
-        ForEach ($Comm in ($CommParams.Keys)) {
-            write-debug "Setting param for $Comm"
-            Set-Variable -Name $Comm -Value $PSBoundParameters.$Comm
-            If (-not ((Get-Variable -Name $Comm).Value)) {
-                Set-Variable -Name $Comm -Value $CommParams.$Comm.Value
-            }
-        }
-        If ($ID) {
-            Get-GW2APIValue -APIValue "skins" -GW2Profile $GW2Profile -APIParams @{ 'ids' = $ID -join ',' }
-        }
-        else {
-            Get-GW2APIValue -APIValue "skins" -GW2Profile $GW2Profile 
-        }
+        $APIEndpoint = "skins"
+        Get-GW2APIValue -APIValue $APIEndpoint @PSBoundParameters
     }
 }
 
-Function Get-GW2Legendaryarmory {
+Function Get-GW2LegendaryArmory {
     <#
     .SYNOPSIS
     Get the legendaryarmory/ from Guild Wars 2 API
@@ -228,7 +198,7 @@ Function Get-GW2Legendaryarmory {
     [cmdletbinding()]
     param()
     DynamicParam {
-        CommonGW2Parameters -IDType "Legendaryarmory"
+        CommonGW2Parameters -IDType "Armory"
     }
     Process {
         $APIEndpoint = "legendaryarmory"

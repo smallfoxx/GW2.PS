@@ -51,13 +51,13 @@ Function InvokeGetAPI {
     )
 
     Process {
-        Write-Debug "Calling $URI with $Token {$($APIParams.keys | %{ ""$_=$($APIParams.$_ -join ',')"" })}"
+        Write-Debug "Calling $URI with $Token {$($APIParams.keys | ForEach-Object { ""$_=$($APIParams.$_ -join ',')"" })}"
         If ($PSVersionTable.PSVersion -ge "7.0") {
-            Invoke-RestMethod -Method Get -Uri $URI -Authentication Bearer -Token $Token -Body $APIParams
+            (Invoke-RestMethod -Method Get -Uri $URI -Authentication Bearer -Token $Token -Body $APIParams)
         }
         elseif ($PSVersionTable.PSVersion -ge "5.1") {
             $APIKey = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto([System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($SecureAPIKey))
-            Invoke-RestMethod -Method Get -Uri $URI -Header @{ "Authorization" = "Bearer $APIKey" } -Body $APIParams
+            (Invoke-RestMethod -Method Get -Uri $URI -Header @{ "Authorization" = "Bearer $APIKey" } -Body $APIParams)
         }
         else {
             throw ("Current PS Version [$($PSVersionTable.PSVersion)] not supported!  Install the latest version of PowerShell for support")
@@ -96,7 +96,21 @@ Get a value from the Guild Wars 2 APIv2
 
         $URI = "$APIBase/$APIValue"
 
+        
         If ($ID) {
+            $IDRegEx = "(.*;\s*)?id=(?<IDValue>[^;]*);?.*"
+            #If ($ID -match $IDRegEx) {
+                <# ODD BUG:  For some reason, even though this -match would come up $true,
+                   the $matches object was never populted so it was swtiched to use the
+                   [RegEx]::matches($String,$String) Method #>
+            #       Write-Debug "Also Fixing value in $ID to $($matches) [$URI]"
+            #       $ID = $matches.IDValue
+            #}
+            $Res=[RegEx]::Matches($ID,$IDRegEx)
+            If ($Res.Groups) {
+                Write-Debug "Fixing value in $ID to $(($Res.Groups | Where-Object { $_.Name -eq 'IDValue' }).Value -join ',') [$URI]"
+                $ID = ($Res.Groups | Where-Object { $_.Name -eq 'IDValue' }).Value -join ","
+            }
             If ($URI -match "^(?<before>.+):id(?<after>.*)") {
                 $URI = "{0}{1}{2}" -f $Matches.before,$ID[0],$Matches.after
             } else {

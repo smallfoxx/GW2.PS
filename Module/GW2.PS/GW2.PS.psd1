@@ -93,7 +93,7 @@ NestedModules = @(
 
 
 # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
-FunctionsToExport = '*-*','LoadKeyConfig','BuildGW2Functions','CommonGW2Parameters'#,'LoadConfig'
+FunctionsToExport = '*-*','LoadKeyConfig','CommonGW2Parameters'#,'LoadConfig'
 
 # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
 # CmdletsToExport = '*'

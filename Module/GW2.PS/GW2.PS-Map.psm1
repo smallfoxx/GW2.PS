@@ -53,15 +53,13 @@ Function Get-GW2AdventureLeaderboard {
     Get the adventures/(id)/leaderboards from Guild Wars 2 API
     #>
     [cmdletbinding()]
-    param(
-        [string]$GW2Profile = (Get-GW2DefaultProfile),
-        [oarameter(ValueFromPipeline, ValueFromPipelineByPropertyName)]
-        [string[]]$id
-    )
+    param()
+    DynamicParam {
+        CommonGW2Parameters -IDType "Leaderboard"
+    }
     Process {
-        ForEach ($i in $id) {
-            Get-GW2APIValue -APIValue "adventures/$i/leaderboards" -GW2Profile $GW2Profile 
-        }
+        $APIEndpoint = "adventures/:id/leaderboards"
+        Get-GW2APIValue -APIValue $APIEndpoint @PSBoundParameters
     }
 }
 
@@ -85,27 +83,15 @@ Function Get-GW2Map {
     Get the maps from Guild Wars 2 API
     #>
     [cmdletbinding()]
-    param(
-        [string]$GW2Profile = (Get-GW2DefaultProfile),
-        [parameter(ValueFromPipelineByPropertyName, ValueFromPipeline)]
-        [Alias("id", "ids")]
-        [string[]]$MapID
-    )
+    param()
+    DynamicParam {
+        CommonGW2Parameters -IDType "Map"
+    }
     Begin {
-        $Maps = @()
+        $APIEndpoint = "maps"
     }
     Process {
-        If ($MapID) {
-            $Maps += $MapID
-        }
-    }
-    End {
-        If ($Maps.Length -gt 0) {
-            Get-GW2APIValue -APIValue "maps" -GW2Profile $GW2Profile -APIParams @{ 'ids' = ($Maps -join ',') }
-        }
-        else {
-            Get-GW2APIValue -APIValue "maps" -GW2Profile $GW2Profile 
-        }
+        Get-GW2APIValue -APIValue $APIEndpoint @PSBoundParameters
     }
 }
 

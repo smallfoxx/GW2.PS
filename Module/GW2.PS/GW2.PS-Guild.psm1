@@ -5,13 +5,13 @@ Function Get-GW2Guild {
     #>
     [cmdletbinding()]
     param(
-        [string]$GW2Profile = (Get-GW2DefaultProfile),
-        [parameter(ValueFromPipelineByPropertyName, ValueFromPipeline, Mandatory)]
-        [Alias("id")]
-        [object]$GuildID
     )
+    DynamicParam {
+        CommonGW2Parameters -IDType 'Guild' -IDMandatory
+    }
     Process {
-        Get-GW2APIValue -APIValue "guild/$GuildID" -GW2Profile $GW2Profile 
+        $APIEndpoint = "guild/:id"
+        Get-GW2APIValue -APIValue $APIEndpoint @PSBoundParameters
     }
 }
 
@@ -24,11 +24,11 @@ Function Get-GW2GuildLog {
     param(
         [string]$GW2Profile = (Get-GW2DefaultProfile),
         [parameter(ValueFromPipelineByPropertyName, ValueFromPipeline, Mandatory)]
-        [Alias("id")]
-        [string]$GuildID
+        [Alias("GuildID")]
+        [string]$ID
     )
     Process {
-        Get-GW2APIValue -APIValue "guild/$GuildID/log" -GW2Profile $GW2Profile 
+        Get-GW2APIValue -APIValue "guild/$ID/log" -GW2Profile $GW2Profile 
     }
 }
 
@@ -41,11 +41,11 @@ Function Get-GW2GuildMember {
     param(
         [string]$GW2Profile = (Get-GW2DefaultProfile),
         [parameter(ValueFromPipelineByPropertyName, ValueFromPipeline, Mandatory)]
-        [Alias("id")]
-        [string]$GuildID
+        [Alias("GuildID")]
+        [string]$ID
     )
     Process {
-        Get-GW2APIValue -APIValue "guild/$GuildID/members" -GW2Profile $GW2Profile 
+        Get-GW2APIValue -APIValue "guild/$ID/members" -GW2Profile $GW2Profile 
     }
 }
             
@@ -58,11 +58,11 @@ Function Get-GW2GuildRank {
     param(
         [string]$GW2Profile = (Get-GW2DefaultProfile),
         [parameter(ValueFromPipelineByPropertyName, ValueFromPipeline, Mandatory)]
-        [Alias("id")]
-        [string]$GuildID
+        [Alias("GuildID")]
+        [string]$ID
     )
     Process {
-        Get-GW2APIValue -APIValue "guild/$GuildID/ranks" -GW2Profile $GW2Profile 
+        Get-GW2APIValue -APIValue "guild/$ID/ranks" -GW2Profile $GW2Profile 
     }
 }
                 
@@ -75,11 +75,11 @@ Function Get-GW2GuildStash {
     param(
         [string]$GW2Profile = (Get-GW2DefaultProfile),
         [parameter(ValueFromPipelineByPropertyName, ValueFromPipeline, Mandatory)]
-        [Alias("id")]
-        [string]$GuildID
+        [Alias("GuildID")]
+        [string]$ID
     )
     Process {
-        Get-GW2APIValue -APIValue "guild/$GuildID/stash" -GW2Profile $GW2Profile 
+        Get-GW2APIValue -APIValue "guild/$ID/stash" -GW2Profile $GW2Profile 
     }
 }
                     
@@ -92,11 +92,11 @@ Function Get-GW2GuildStorage {
     param(
         [string]$GW2Profile = (Get-GW2DefaultProfile),
         [parameter(ValueFromPipelineByPropertyName, ValueFromPipeline, Mandatory)]
-        [Alias("id")]
-        [string]$GuildID
+        [Alias("GuildID")]
+        [string]$ID
     )
     Process {
-        Get-GW2APIValue -APIValue "guild/$GuildID/storage" -GW2Profile $GW2Profile 
+        Get-GW2APIValue -APIValue "guild/$ID/storage" -GW2Profile $GW2Profile 
     }
 }
     
@@ -109,11 +109,11 @@ Function Get-GW2GuildTeam {
     param(
         [string]$GW2Profile = (Get-GW2DefaultProfile),
         [parameter(ValueFromPipelineByPropertyName, ValueFromPipeline, Mandatory)]
-        [Alias("id")]
-        [string]$GuildID
+        [Alias("GuildID")]
+        [string]$ID
     )
     Process {
-        Get-GW2APIValue -APIValue "guild/$GuildID/teams" -GW2Profile $GW2Profile 
+        Get-GW2APIValue -APIValue "guild/$ID/teams" -GW2Profile $GW2Profile 
     }
 }
 
@@ -126,11 +126,11 @@ Function Get-GW2GuildTreasury {
     param(
         [string]$GW2Profile = (Get-GW2DefaultProfile),
         [parameter(ValueFromPipelineByPropertyName, ValueFromPipeline, Mandatory)]
-        [Alias("id")]
-        [string]$GuildID
+        [Alias("GuildID")]
+        [string]$ID
     )
     Process {
-        Get-GW2APIValue -APIValue "guild/$GuildID/treasury" -GW2Profile $GW2Profile 
+        Get-GW2APIValue -APIValue "guild/$ID/treasury" -GW2Profile $GW2Profile 
     }
 }
 
@@ -143,11 +143,11 @@ Function Get-GW2GuildUpgrade {
     param(
         [string]$GW2Profile = (Get-GW2DefaultProfile),
         [parameter(ValueFromPipelineByPropertyName, ValueFromPipeline, Mandatory)]
-        [Alias("id")]
-        [string]$GuildID
+        [Alias("GuildID")]
+        [string]$ID
     )
     Process {
-        Get-GW2APIValue -APIValue "guild/$GuildID/upgrades" -GW2Profile $GW2Profile 
+        Get-GW2APIValue -APIValue "guild/$ID/upgrades" -GW2Profile $GW2Profile 
     }
 }
 

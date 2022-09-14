@@ -4,20 +4,13 @@ Function Get-GW2Currency {
     Get the currencies from Guild Wars 2 API
     #>
     [cmdletbinding()]
-    param(
-        [string]$GW2Profile = (Get-GW2DefaultProfile),
-        [parameter(ValueFromPipeline, ValueFromPipelineByPropertyName)]
-        [Alias("Id")]
-        [string[]]$CurrencyId
-    )
+    param()
+    DynamicParam {
+        CommonGW2Parameters -IDType "Currency"
+    }
     Process {
-        If ($CurrencyId) {
-            Get-GW2APIValue -APIValue "currencies" -GW2Profile $GW2Profile -APIParams @{ 'ids' = $CurrencyId -join ',' }
-        }
-        else {
-            Get-GW2APIValue -APIValue "currencies" -GW2Profile $GW2Profile 
-        }
-
+        $APIEndpoint = "currencies"
+        Get-GW2APIValue -APIValue $APIEndpoint @PSBoundParameters
     }
 }
 
@@ -27,19 +20,13 @@ Function Get-GW2Dungeon {
     Get the dungeons/ from Guild Wars 2 API
     #>
     [cmdletbinding()]
-    param(
-        [string]$GW2Profile = (Get-GW2DefaultProfile),
-        [parameter(ValueFromPipeline, ValueFromPipelineByPropertyName)]
-        [Alias("Name", "Id")]
-        [string[]]$DungeonId
-    )
+    param()
+    DynamicParam {
+        CommonGW2Parameters -IDType "Dungeon"
+    }
     Process {
-        If ($DungeonId) {
-            Get-GW2APIValue -APIValue "dungeons" -GW2Profile $GW2Profile -APIParams @{ 'ids' = $DungeonId -join ',' }
-        }
-        else {
-            Get-GW2APIValue -APIValue "dungeons" -GW2Profile $GW2Profile 
-        }
+        $APIEndpoint = "dungeons"
+        Get-GW2APIValue -APIValue $APIEndpoint @PSBoundParameters
     }
 }
     
@@ -63,19 +50,13 @@ Function Get-GW2Mini {
         Get the minis/ from Guild Wars 2 API
         #>
     [cmdletbinding()]
-    param(
-        [string]$GW2Profile = (Get-GW2DefaultProfile),
-        [parameter(ValueFromPipelineByPropertyName, ValueFromPipeline)]
-        [Alias("id", "ids")]
-        [string[]]$MiniID
-    )
+    param()
+    DynamicParam {
+        CommonGW2Parameters -IDType "Mini"
+    }
     Process {
-        If ($MiniID) {
-            Get-GW2APIValue -APIValue "minis" -GW2Profile $GW2Profile -APIParams @{ 'ids' = ($MiniID -join ',') }
-        }
-        else {
-            Get-GW2APIValue -APIValue "minis" -GW2Profile $GW2Profile 
-        }
+        $APIEndpoint = "minis"
+        Get-GW2APIValue -APIValue $APIEndpoint @PSBoundParameters
     }
 }
 
@@ -85,19 +66,13 @@ Function Get-GW2Novelty {
     Get the novelties from Guild Wars 2 API
     #>
     [cmdletbinding()]
-    param(
-        [string]$GW2Profile = (Get-GW2DefaultProfile),
-        [parameter(ValueFromPipelineByPropertyName, ValueFromPipeline)]
-        [Alias("id", "ids")]
-        [string[]]$NoveltyID
-    )
+    param()
+    DynamicParam {
+        CommonGW2Parameters -IDType "Novelty"
+    }
     Process {
-        If ($NoveltyID) {
-            Get-GW2APIValue -APIValue "novelties" -GW2Profile $GW2Profile -APIParams @{ 'ids' = ($NoveltyID -join ',') }
-        }
-        else {
-            Get-GW2APIValue -APIValue "novelties" -GW2Profile $GW2Profile 
-        }
+        $APIEndpoint = "novelties"
+        Get-GW2APIValue -APIValue $APIEndpoint @PSBoundParameters
     }
 }
     
@@ -107,19 +82,13 @@ Function Get-GW2Raid {
     Get the raids/ from Guild Wars 2 API
     #>
     [cmdletbinding()]
-    param(
-        [string]$GW2Profile = (Get-GW2DefaultProfile),
-        [parameter(ValueFromPipelineByPropertyName, ValueFromPipeline)]
-        [Alias("id", "ids")]
-        [string[]]$RaidID
-    )
+    param()
+    DynamicParam {
+        CommonGW2Parameters -IDType "Raid"
+    }
     Process {
-        If ($RaidID) {
-            Get-GW2APIValue -APIValue "raids" -GW2Profile $GW2Profile -APIParams @{ 'ids' = ($RaidID -join ',') }
-        }
-        else {
-            Get-GW2APIValue -APIValue "raids" -GW2Profile $GW2Profile 
-        }
+        $APIEndpoint = "raids"
+        Get-GW2APIValue -APIValue $APIEndpoint @PSBoundParameters
     }
 }
     
@@ -131,24 +100,11 @@ Function Get-GW2Title {
     [cmdletbinding()]
     param()
     DynamicParam {
-        CommonGW2Parameters
-    }
-    Begin {
-        $CommParams = CommonGW2Parameters
+        CommonGW2Parameters -IDType "Title"
     }
     Process {
-        ForEach ($Comm in ($CommParams.Keys)) {
-            Set-Variable -Name $Comm -Value $PSBoundParameters.$Comm
-            If (-not ((Get-Variable -Name $Comm).Value)) {
-                Set-Variable -Name $Comm -Value $CommParams.$Comm.Value
-            }
-        }
-        If ($ID) {
-            Get-GW2APIValue -APIValue "titles" -GW2Profile $GW2Profile -APIParams @{ 'ids' = ($ID -join ',') }
-        }
-        else {
-            Get-GW2APIValue -APIValue "titles" -GW2Profile $GW2Profile 
-        }
+        $APIEndpoint = "titles"
+        Get-GW2APIValue -APIValue $APIEndpoint @PSBoundParameters
     }
 }
 
@@ -160,24 +116,11 @@ Function Get-GW2World {
     [cmdletbinding()]
     param()
     DynamicParam {
-        CommonGW2Parameters -IDType 'World'
-    }
-    Begin {
-        $CommParams = CommonGW2Parameters -IDType 'World'
+        CommonGW2Parameters -IDType "World"
     }
     Process {
-        ForEach ($Comm in ($CommParams.Keys)) {
-            Set-Variable -Name $Comm -Value $PSBoundParameters.$Comm
-            If (-not ((Get-Variable -Name $Comm).Value)) {
-                Set-Variable -Name $Comm -Value $CommParams.$Comm.Value
-            }
-        }
-        If ($ID) {
-            Get-GW2APIValue -APIValue "worlds" -GW2Profile $GW2Profile -APIParams @{ 'ids' = ($ID -join ',') }
-        }
-        else {
-            Get-GW2APIValue -APIValue "worlds" -GW2Profile $GW2Profile 
-        }
+        $APIEndpoint = "worlds"
+        Get-GW2APIValue -APIValue $APIEndpoint @PSBoundParameters
     }
 }
 

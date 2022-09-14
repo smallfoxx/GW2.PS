@@ -17,12 +17,32 @@ Function Get-GW2CommerceTransaction {
     .SYNOPSIS
     Get the commerce/transactions from Guild Wars 2 API
     #>
-    [cmdletbinding()]
+    [cmdletbinding(DefaultParameterSetName="CurrentTransactions")]
     param(
+        [parameter(ParameterSetName="CurrentTransactions")]
+        [switch]$Current,
+        [parameter(ParameterSetName="HistoryTransactions",Mandatory)]
+        [switch]$History,
+        [switch]$Buys,
+        [switch]$Sells=(-not $Buys),
         [string]$GW2Profile = (Get-GW2DefaultProfile)
     )
     Process {
-        Get-GW2APIValue -APIValue "commerce/transactions" -GW2Profile $GW2Profile 
+        switch ($PSCmdlet.ParameterSetName) {
+            "HistoryTransactions" { $Edition = "history" }
+            default { $Edition = "current" }
+        }
+        If ($Buys -and $Sells) {
+            $Result = @{
+                "Buys" = Get-GW2APIValue -APIValue "commerce/transactions/$edition/buys" -GW2Profile $GW2Profile
+                "Sells" = Get-GW2APIValue -APIValue "commerce/transactions/$edition/sells" -GW2Profile $GW2Profile
+            }
+            return $Result
+        } elseif ($Buys) {
+            Get-GW2APIValue -APIValue "commerce/transactions/$edition/sells" -GW2Profile $GW2Profile 
+        } else {
+            Get-GW2APIValue -APIValue "commerce/transactions/$edition/buys" -GW2Profile $GW2Profile 
+        }
     }
 }
 
@@ -31,14 +51,32 @@ Function Get-GW2CommerceExchange {
     .SYNOPSIS
     Get the commerce/exchange from Guild Wars 2 API
     #>
-    [cmdletbinding()]
-    param()
+    [cmdletbinding(DefaultParameterSetName="GemsForCoins")]
+    param(
+        [parameter(ParameterSetName="GoldForGems",ValueFromPipelineByPropertyName,Mandatory)]
+        [double]$Gold,
+        [parameter(ParameterSetName="GemsForCoins",ValueFromPipeline,ValueFromPipelineByPropertyName)]
+        [int]$Gems
+    )
     DynamicParam {
         CommonGW2Parameters -IDType "Exchange"
     }
     Process {
-        $APIEndpoint = "commerce/exchange"
-        Get-GW2APIValue -APIValue $APIEndpoint @PSBoundParameters
+        switch ($PSCmdlet.ParameterSetName) {
+            "GoldForGems" {
+                Get-GW2CommerceExchangeCoin -Gold $Gold
+            }
+            default {
+                If ($Gems) {
+                    Get-GW2CommerceExchangeGem -Gems $Gems
+                } else {
+                    @{
+                        "BuyGems" = Get-GW2CommerceExchangeGem
+                        "BuyCoins" = Get-GW2CommerceExchangeCoin
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -48,13 +86,15 @@ Function Get-GW2CommerceExchangeCoin {
     Get the commerce/exchange/coins from Guild Wars 2 API
     #>
     [cmdletbinding()]
-    param()
+    param(
+        [double]$Gold=1
+    )
     DynamicParam {
-        CommonGW2Parameters -IDType "Coin"
+        CommonGW2Parameters
     }
     Process {
         $APIEndpoint = "commerce/exchange/coins"
-        Get-GW2APIValue -APIValue $APIEndpoint @PSBoundParameters
+        Get-GW2APIValue -APIValue $APIEndpoint -APIParams @{ 'quantity' = [math]::Floor($Gold * 10000) } @PSBoundParameters
     }
 }
 
@@ -64,13 +104,15 @@ Function Get-GW2CommerceExchangeGem {
     Get the commerce/exchange/gems from Guild Wars 2 API
     #>
     [cmdletbinding()]
-    param()
+    param(
+        [int]$Gems=100
+    )
     DynamicParam {
-        CommonGW2Parameters -IDType "Gem"
+        CommonGW2Parameters
     }
     Process {
         $APIEndpoint = "commerce/exchange/gems"
-        Get-GW2APIValue -APIValue $APIEndpoint @PSBoundParameters
+        Get-GW2APIValue -APIValue $APIEndpoint -APIParams @{ 'quantity' = $Gems } @PSBoundParameters
     }
 }
 
