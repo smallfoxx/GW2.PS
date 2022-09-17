@@ -12,7 +12,7 @@
 # RootModule = ''
 
 # Version number of this module.
-ModuleVersion = '0.0.2.0003'
+ModuleVersion = '0.0.2.1004'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -51,11 +51,10 @@ PowerShellVersion = '5.1'
 # ProcessorArchitecture = ''
 
 # Modules that must be imported into the global environment prior to importing this module
-<#RequiredModules = @(
-    'Microsoft.PowerShell.SecretManagement',
-    'Microsoft.PowerShell.SecretStore'
-  )
-#>
+RequiredModules = @(
+  'GW2.PS.API'
+)
+
 
 # Assemblies that must be loaded prior to importing this module
 # RequiredAssemblies = @()
@@ -70,30 +69,11 @@ PowerShellVersion = '5.1'
 # FormatsToProcess = @()
 
 # Modules to import as nested modules of the module specified in RootModule/ModuleToProcess
-NestedModules = @(
-    "GW2.PS-CoreAPICalls.psm1",
-    "GW2.PS-KeyManagement.psm1",
-    "GW2.PS-ConfigManagement.psm1",
-    "GW2.PS-Account.psm1",
-    "GW2.PS-Achievements.psm1",
-    "GW2.PS-Characters.psm1",
-    "GW2.PS-Daily.psm1",
-    "GW2.PS-Guild.psm1",
-    "GW2.PS-HomeInstance.psm1",
-    "GW2.PS-Items.psm1",
-    "GW2.PS-Map.psm1",
-    "GW2.PS-Mechanics.psm1",
-    "GW2.PS-Miscellaneous.psm1",
-    "GW2.PS-PvP.psm1",
-    "GW2.PS-Story.psm1",
-    "GW2.PS-Tradeskills.psm1",
-    "GW2.PS-TradingPost.psm1",
-    "GW2.PS-WvW.psm1"
-  )
+NestedModules = @()
 
 
 # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
-FunctionsToExport = '*-*','CommonGW2Parameters'
+# FunctionsToExport = '*-*'
 
 # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
 # CmdletsToExport = '*'
