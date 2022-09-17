@@ -271,7 +271,7 @@ Function Get-GW2AccountDailycrafting {
     [cmdletbinding()]
     param()
     DynamicParam {
-        CommonGW2Parameters -IDType "Dailycrafting"
+        CommonGW2Parameters
     }
     Process {
         $APIEndpoint = "account/dailycrafting"
@@ -287,7 +287,7 @@ Function Get-GW2AccountDungeon {
     [cmdletbinding()]
     param()
     DynamicParam {
-        CommonGW2Parameters -IDType "Dungeon"
+        CommonGW2Parameters
     }
     Process {
         $APIEndpoint = "account/dungeons"
@@ -303,7 +303,7 @@ Function Get-GW2AccountDye {
     [cmdletbinding()]
     param()
     DynamicParam {
-        CommonGW2Parameters -IDType "Dye"
+        CommonGW2Parameters
     }
     Process {
         $APIEndpoint = "account/dyes"
@@ -319,7 +319,7 @@ Function Get-GW2AccountEmote {
     [cmdletbinding()]
     param()
     DynamicParam {
-        CommonGW2Parameters -IDType "Emote"
+        CommonGW2Parameters
     }
     Process {
         $APIEndpoint = "account/emotes"
@@ -335,7 +335,7 @@ Function Get-GW2AccountFinisher {
     [cmdletbinding()]
     param()
     DynamicParam {
-        CommonGW2Parameters -IDType "Finisher"
+        CommonGW2Parameters
     }
     Process {
         $APIEndpoint = "account/finishers"
@@ -351,7 +351,7 @@ Function Get-GW2AccountGlider {
     [cmdletbinding()]
     param()
     DynamicParam {
-        CommonGW2Parameters -IDType "Glider"
+        CommonGW2Parameters
     }
     Process {
         $APIEndpoint = "account/gliders"
@@ -367,7 +367,7 @@ Function Get-GW2AccountHomeCat {
     [cmdletbinding()]
     param()
     DynamicParam {
-        CommonGW2Parameters -IDType "Cat"
+        CommonGW2Parameters
     }
     Process {
         $APIEndpoint = "account/home/cats"
@@ -383,7 +383,7 @@ Function Get-GW2AccountHomeNode {
     [cmdletbinding()]
     param()
     DynamicParam {
-        CommonGW2Parameters -IDType "Node"
+        CommonGW2Parameters
     }
     Process {
         $APIEndpoint = "account/home/nodes"
@@ -399,7 +399,7 @@ Function Get-GW2AccountInventory {
     [cmdletbinding()]
     param()
     DynamicParam {
-        CommonGW2Parameters -IDType "Inventory"
+        CommonGW2Parameters
     }
     Process {
         $APIEndpoint = "account/inventory"
@@ -415,7 +415,7 @@ Function Get-GW2AccountLegendaryarmory {
     [cmdletbinding()]
     param()
     DynamicParam {
-        CommonGW2Parameters -IDType "Legendaryarmory"
+        CommonGW2Parameters
     }
     Process {
         $APIEndpoint = "account/legendaryarmory"
@@ -431,7 +431,7 @@ Function Get-GW2AccountLuck {
     [cmdletbinding()]
     param()
     DynamicParam {
-        CommonGW2Parameters -IDType "Luck"
+        CommonGW2Parameters
     }
     Process {
         $APIEndpoint = "account/luck"
@@ -447,7 +447,7 @@ Function Get-GW2AccountMailcarrier {
     [cmdletbinding()]
     param()
     DynamicParam {
-        CommonGW2Parameters -IDType "Mailcarrier"
+        CommonGW2Parameters
     }
     Process {
         $APIEndpoint = "account/mailcarriers"
@@ -463,7 +463,7 @@ Function Get-GW2AccountMapchest {
     [cmdletbinding()]
     param()
     DynamicParam {
-        CommonGW2Parameters -IDType "Mapchest"
+        CommonGW2Parameters
     }
     Process {
         $APIEndpoint = "account/mapchests"
@@ -479,7 +479,7 @@ Function Get-GW2AccountMastery {
     [cmdletbinding()]
     param()
     DynamicParam {
-        CommonGW2Parameters -IDType "Masterie"
+        CommonGW2Parameters
     }
     Process {
         $APIEndpoint = "account/masteries"
@@ -495,7 +495,7 @@ Function Get-GW2AccountMasteryPoint {
     [cmdletbinding()]
     param()
     DynamicParam {
-        CommonGW2Parameters -IDType "Point"
+        CommonGW2Parameters
     }
     Process {
         $APIEndpoint = "account/mastery/points"
@@ -511,7 +511,7 @@ Function Get-GW2AccountMaterial {
     [cmdletbinding()]
     param()
     DynamicParam {
-        CommonGW2Parameters -IDType "Material"
+        CommonGW2Parameters
     }
     Process {
         $APIEndpoint = "account/materials"
@@ -527,7 +527,7 @@ Function Get-GW2AccountMini {
     [cmdletbinding()]
     param()
     DynamicParam {
-        CommonGW2Parameters -IDType "Mini"
+        CommonGW2Parameters
     }
     Process {
         $APIEndpoint = "account/minis"
@@ -543,7 +543,7 @@ Function Get-GW2AccountMountSkin {
     [cmdletbinding()]
     param()
     DynamicParam {
-        CommonGW2Parameters -IDType "Skin"
+        CommonGW2Parameters
     }
     Process {
         $APIEndpoint = "account/mounts/skins"
@@ -559,7 +559,7 @@ Function Get-GW2AccountMountType {
     [cmdletbinding()]
     param()
     DynamicParam {
-        CommonGW2Parameters -IDType "Type"
+        CommonGW2Parameters
     }
     Process {
         $APIEndpoint = "account/mounts/types"
@@ -575,7 +575,7 @@ Function Get-GW2AccountNovelty {
     [cmdletbinding()]
     param()
     DynamicParam {
-        CommonGW2Parameters -IDType "Noveltie"
+        CommonGW2Parameters
     }
     Process {
         $APIEndpoint = "account/novelties"
@@ -591,7 +591,7 @@ Function Get-GW2AccountOutfit {
     [cmdletbinding()]
     param()
     DynamicParam {
-        CommonGW2Parameters -IDType "Outfit"
+        CommonGW2Parameters
     }
     Process {
         $APIEndpoint = "account/outfits"
@@ -607,7 +607,7 @@ Function Get-GW2AccountProgression {
     [cmdletbinding()]
     param()
     DynamicParam {
-        CommonGW2Parameters -IDType "Progression"
+        CommonGW2Parameters
     }
     Process {
         $APIEndpoint = "account/progression"
@@ -639,7 +639,7 @@ Function Get-GW2AccountRaid {
     [cmdletbinding()]
     param()
     DynamicParam {
-        CommonGW2Parameters -IDType "Raid"
+        CommonGW2Parameters
     }
     Process {
         $APIEndpoint = "account/raids"
@@ -655,7 +655,7 @@ Function Get-GW2AccountRecipe {
     [cmdletbinding()]
     param()
     DynamicParam {
-        CommonGW2Parameters -IDType "Recipe"
+        CommonGW2Parameters
     }
     Process {
         $APIEndpoint = "account/recipes"
@@ -671,7 +671,7 @@ Function Get-GW2AccountSkin {
     [cmdletbinding()]
     param()
     DynamicParam {
-        CommonGW2Parameters -IDType "Skin"
+        CommonGW2Parameters
     }
     Process {
         $APIEndpoint = "account/skins"
@@ -687,7 +687,7 @@ Function Get-GW2AccountTitle {
     [cmdletbinding()]
     param()
     DynamicParam {
-        CommonGW2Parameters -IDType "Title"
+        CommonGW2Parameters
     }
     Process {
         $APIEndpoint = "account/titles"
@@ -703,7 +703,7 @@ Function Get-GW2AccountWallet {
     [cmdletbinding()]
     param()
     DynamicParam {
-        CommonGW2Parameters -IDType "Wallet"
+        CommonGW2Parameters
     }
     Process {
         $APIEndpoint = "account/wallet"
@@ -719,7 +719,7 @@ Function Get-GW2AccountWorldboss {
     [cmdletbinding()]
     param()
     DynamicParam {
-        CommonGW2Parameters -IDType "Worldbosse"
+        CommonGW2Parameters
     }
     Process {
         $APIEndpoint = "account/worldbosses"
