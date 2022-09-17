@@ -175,7 +175,10 @@ Function New-GW2Subtoken {
         If (-not [string]::IsNullOrEmpty($Permissions)) { $APIParams.permissions = $Permissions -join ',' }
         If (-not [string]::IsNullOrEmpty($URLs)) { $APIParams.urls = $URLs -join ',' }
 
-        Get-GW2APIValue -APIValue "createsubtoken" -GW2Profile $GW2Profile -APIParams $APIParams
+        $result = Get-GW2APIValue -APIValue "createsubtoken" -GW2Profile $GW2Profile -APIParams $APIParams
+        If ($result) {
+            return $result.subtoken
+        }
     }
 }
         
