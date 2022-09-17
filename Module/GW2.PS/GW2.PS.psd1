@@ -12,7 +12,7 @@
 # RootModule = ''
 
 # Version number of this module.
-ModuleVersion = '0.0.2.1004'
+ModuleVersion = '0.0.2.1005'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -52,7 +52,10 @@ PowerShellVersion = '5.1'
 
 # Modules that must be imported into the global environment prior to importing this module
 RequiredModules = @(
-  'GW2.PS.API'
+  @{
+    'ModuleName' = 'GW2.PS.API'
+    'ModuleVersion' = '0.0.2.1005'
+  }
 )
 
 
