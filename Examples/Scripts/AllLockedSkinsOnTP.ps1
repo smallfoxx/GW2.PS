@@ -40,6 +40,14 @@ Begin {
             If ($PromptResponse -match "^y") {
                 Install-Module -Name $ReqMod.Name -MinimumVersion $ReqMod.Version -Force
                 Import-Module -Name $ReqMod.Name
+                If (-not (Get-GW2APIKey)) {
+                    Write-Host ""
+                    Write-Host "You will need an API Key from Arena Net to access your GW2 account." -ForegroundColor Cyan
+                    Write-Host "You can get full details at https://bit.ly/gw2psinst or just go" -ForegroundColor Cyan
+                    Write-Host "directly to https://account.arena.net/applications to get your API Key." -ForegroundColor Cyan
+                    Write-Host
+                    Set-GW2APIKey
+                }
             }
         }
     }
@@ -47,7 +55,6 @@ Begin {
 
 Process {
     
-    # First we make sure the CSV file is something usable and has the right extension
     If (Test-Path $CSVFilePath -ErrorAction SilentlyContinue) {
         $CSVFile = Get-Item $CSVFilePath
         If ($CSVFile.Extension -ne ".csv") {
@@ -111,7 +118,7 @@ Process {
     $itemsWithLockedSkins | Add-Member ScriptProperty SkinName { $this.Skin.name } -Force
     $itemsWithLockedSkins | Add-Member ScriptProperty SkinType { $this.Skin.type } -Force
     $itemsWithLockedSkins | Add-Member ScriptProperty SkinIcon { $this.Skin.icon } -Force
-    $itemsWithLockedSkins | Add-Member ScriptProperty Listings { if ($this.flags -notcontains "AccountBound") { $auctionListingsTable.($this.id) } } # | Where-Object { $_.id -eq $this.id } } } -Force # Get-GW2CommerceListing -id $item.id)
+    $itemsWithLockedSkins | Add-Member ScriptProperty Listings { if ($this.flags -notcontains "AccountBound") { $auctionListingsTable.($this.id) } }
     $itemsWithLockedSkins | Add-Member ScriptProperty Buys { if ($this.Listings) { $this.Listings.Buys } } -Force
     $itemsWithLockedSkins | Add-Member ScriptProperty Sells { if ($this.Listings) { $this.Listings.Sells } } -Force
     $itemsWithLockedSkins | Add-Member ScriptProperty MaxBuy { if ($this.Listings) { ($this.Buys | Sort-Object unit_price | Select-Object -last 1).unit_price/10000 } } -Force
