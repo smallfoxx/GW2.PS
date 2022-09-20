@@ -46,6 +46,8 @@ your account such as your in game name (IGN), expansions, world, etc., you can r
 As another example, if you would like to retrieve the daily achievements, you can run the following command:
 
     Get-GW2Achievement -Daily
+
+You can find more examples at the Wiki page [Examples](/smallfoxx/GW2.PS/wiki/Examples).
     
 ## Documentation
 
