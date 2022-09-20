@@ -55,6 +55,11 @@ For additional details and instructions, please see the repositories [Wiki](/sma
 
 https://github.com/smallfoxx/GW2.PS/wiki
 
+### Submodules
+
+* [GW2.PS.API](/smallfoxx/GW2.PS.API)
+* [GW2.PS.Cache](/smallfoxx/GW2.PS.Cache)
+
 ## License
 
 This project is published under the MIT License.  Full details available in the [LICENSE](/smallfoxx/GW2.PS/blob/main/LICENSE) file of the repository.
