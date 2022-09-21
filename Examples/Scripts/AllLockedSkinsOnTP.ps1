@@ -106,7 +106,7 @@ Process {
     Write-Host ("{0:[HH:mm:ss]} Getting auctions of locked items..." -f (Get-Date))
     $auctionListingsTable = @{}
     ($itemsWithLockedSkins | Where-Object { $_.default_skin -in $lockedSkinIds } ).id | 
-        Group-GW2ObjectByCount | Get-GW2CommerceListing -UseCache:$false | ForEach-Object { $id=$_.id; $auctionListingsTable.$id = $_ }
+        Group-GW2ObjectByCount | Get-GW2CommerceListing -UseCache:$false -UseDB:$false | ForEach-Object { $id=$_.id; $auctionListingsTable.$id = $_ }
 
     Write-Host ("{0:[HH:mm:ss]} Associating details about items..." -f (Get-Date))
     $itemsWithLockedSkins | Add-Member ScriptProperty WikiURL { "https://wiki.guildwars2.com/wiki/?search={0}&ns0=1" -f ($this.chat_link) } -Force

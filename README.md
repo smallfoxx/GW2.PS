@@ -59,6 +59,7 @@ https://github.com/smallfoxx/GW2.PS/wiki
 
 * [GW2.PS.API](/smallfoxx/GW2.PS.API)
 * [GW2.PS.Cache](/smallfoxx/GW2.PS.Cache)
+* [GW2.PS.LiteDB](/smallfoxx/GW2.PS.LiteDB)
 
 ## License
 

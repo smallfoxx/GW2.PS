@@ -12,7 +12,7 @@
 # RootModule = ''
 
 # Version number of this module.
-ModuleVersion = '0.1.2.40'
+ModuleVersion = '0.1.999.1'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -54,11 +54,15 @@ PowerShellVersion = '5.1'
 RequiredModules = @(
   @{
     'ModuleName' = 'GW2.PS.API'
-    'ModuleVersion' = '0.1.2.40'
+    'ModuleVersion' = '0.1.999.1'
   },
   @{
     'ModuleName' = 'GW2.PS.Cache'
     'ModuleVersion' = '0.0.3.1'
+  },
+  @{
+    'ModuleName' = 'GW2.PS.LiteDB'
+    'ModuleVersion' = '0.1.999.1'
   }
 )
 
