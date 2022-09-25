@@ -54,15 +54,15 @@ PowerShellVersion = '5.1'
 RequiredModules = @(
   @{
     'ModuleName' = 'GW2.PS.API'
-    'ModuleVersion' = '0.1.999.1'
+    'ModuleVersion' = '0.2.1.1'
   },
   @{
     'ModuleName' = 'GW2.PS.Cache'
-    'ModuleVersion' = '0.0.3.1'
+    'ModuleVersion' = '0.1.0.0'
   },
   @{
     'ModuleName' = 'GW2.PS.LiteDB'
-    'ModuleVersion' = '0.1.999.1'
+    'ModuleVersion' = '0.2.1.1'
   }
 )
 
