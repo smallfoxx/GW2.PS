@@ -56,11 +56,6 @@ If ($IncludeCharacterInventory) {
     $All.Favors.Bags = $Inventories.Values.Bags.Inventory | ?{ $_.ID -in $ImperialFavorID }
 }
 
-If ($IncludeDetail) {
-    $ImperialFavor = Get-GW2Item -Id ImperialFavorID
-    $ImperialFavor | Add-Member NoteProperty Currency (Get-GW2Currency -id ImperialFavorCurrID)
-}
-
 $Total = [PSCustomObject]@{
     'Favors' = $All.Favors.Wallet +  (@($all.Writs.'Bags',$all.writs.'bank') | measure-object -sum -Property Count).Sum
     'Writs' = ($All.Writs.values | %{ $_  } | Measure-Object -Sum -Property Count).Sum
