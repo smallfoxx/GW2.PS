@@ -16,23 +16,28 @@ param(
     [ValidateSet('Axe','Dagger','Focus','Greatsword','Hammer','Harpoon','LongBow','Mace',
         'Pistol','Rifle','Scepter','Shield','ShortBow','Speargun','Staff','Sword','Torch',
         'Trident','Warhorn')]
-    [string]$WeaponType
+    [string]$WeaponType,
+    [switch]$PassThru
 )
 
 Begin {
     $RequiredModules = @(
         @{ 
+            "Name"="GW2.PS.LiteDB"
+            "Version"=[version]"0.1.5"
+        }
+        @{ 
             "Name"="GW2.PS.Cache"
-            "Version"=[version]"0.1.2.40"
+            "Version"=[version]"0.1.5"
         }
         @{ 
             "Name"="GW2.PS.API"
-            "Version"=[version]"0.1.2.40"
+            "Version"=[version]"0.1.5"
         }
     )
 
     ForEach ($ReqMod in $RequiredModules) {
-        If (Get-Module -Name $ReqMod.Name -ListAvailable | Where-Object {$_.Version -ge $ReqMod.Version}) {
+        If (@((Get-Module -Name $ReqMod.Name),(Get-Module -Name $ReqMod.Name -ListAvailable)) | Where-Object {$_.Version -ge $ReqMod.Version}) {
             Write-Debug "Found module $($ReqMod.Name) [>=$($ReqMod.Version)]"
         } else {
             Write-Error "Required module $($ReqMod.Name) [$($ReqMod.Version)] NOT FOUND!"
@@ -51,6 +56,16 @@ Begin {
             }
         }
     }
+
+    $Connected = Connect-GW2LiteDB -PassThru
+
+    If (Test-GW2DBMinimum -Prompt -PassThru) {
+
+    } else {
+        throw("Basic database content missing. Load data before proceeding.")
+        break
+    }
+
 }
 
 Process {
@@ -66,63 +81,74 @@ Process {
     Write-Host ("{0:[HH:mm:ss]} Will export data to {1}" -f (Get-Date),$CSVFilePath)
 
     Write-Host ("{0:[HH:mm:ss]} Getting unlocked skin IDs..." -f (Get-Date))
-    $unlockedSkins = Get-GW2AccountSkin
+    $unlockedSkins = Get-GW2AccountSkin -Online
 
 
-    Write-Host ("{0:[HH:mm:ss]} Geting locked skin IDs..." -f (Get-Date))
-    $allSkins = Get-GW2Skin
-    $lockedSkins = $allSkins | Where-Object { $_ -notin $unlockedSkins }
+    Write-Host ("{0:[HH:mm:ss]} Found $($unlockedSkins.count) unlocked. Geting locked skin IDs..." -f (Get-Date))
+    $allSkinIDs = Get-GW2Skin
+    $lockedSkinIDs = $allSkinIDs | Where-Object { $_ -notin $unlockedSkins }
 
-    Write-Host ("{0:[HH:mm:ss]} Getting all items' details..." -f (Get-Date))
-    $allItems = Get-GW2Item 
-    $allItemDetails = $allItems | Group-GW2ObjectByCount | Get-GW2Item | Where-Object { ($_.Flags -notcontains 'AccountBound') -and ($_.Flags -notcontains 'SoulbindOnAcquire') }
+    Write-Host ("{0:[HH:mm:ss]} Found $($lockedSkinIDs.count) locked. Building query..." -f (Get-Date))
+    $generalFilters=@()
 
     If ($Rarity) {
-        $allItemDetails = $allItemDetails | Where-Object { $_.rarity -eq $Rarity }
+        $generalFilters += "`$.rarity = '$Rarity'"
     }
     If ($ItemType) {
-        $allItemDetails = $allItemDetails | Where-Object { $_.type -eq $ItemType }
+        $generalFilters += "`$.type = '$ItemType'"
     }
     If ($Weight) {
-        $allItemDetails = $allItemDetails | Where-Object { $_.details.weight_class -eq $Weight }
+        $generalFilters += "`$.details.weight_class = '$Weight'"
     }
     If ($Slot) {
-        $allItemDetails = $allItemDetails | Where-Object { $_.details.type -eq $Slot }
+        $generalFilters += "`$.details.type = '$Slot'"
     }
     If ($WeaponType) {
-        $allItemDetails = $allItemDetails | Where-Object { $_.details.type -eq $WeaponType }
+        $generalFilters += "`$.details.type = '$WeaponType'"
     }
 
+    Write-Host ("{0:[HH:mm:ss]} Querying for locked items..." -f (Get-Date))
+    $lockedItems = ForEach ($lockedGroup in ($lockedSkinIDs | Group-GW2ObjectByCount)) {
+        $lockedGroup = $lockedGroup -replace ",","','"
+        $thisFilters = @("`$.default_skin IN ['{0}']" -f $lockedGroup) + $generalFilters
+        $queryString = $thisFilters -join " AND "
+        Write-Debug ("`t{0:[HH:mm:ss]} Query for this group: {1}" -f (Get-Date),$queryString)
+        Get-GW2DBEntryByQuery -CollectionName 'items' -QueryString $queryString
+    }
+    write-host "Found $($lockedItems.count)"
+    $lockedTradeable = $lockedItems | Where-Object { ($_.Flags -notcontains 'AccountBound') -and ($_.Flags -notcontains 'SoulbindOnAcquire') }
+    write-Host "Of those, $($lockedTradeable.count) are tradeable"
 
-    Write-Host ("{0:[HH:mm:ss]} Getting items ($($allItemDetails.count)) with locked skins ($($lockedSkins.count))..." -f (Get-Date))
-    $itemsWithLockedSkins = $allItemDetails | Where-Object { $_.default_skin -in $lockedSkins }
-    $lockedSkinIds = $itemsWithLockedSkins.default_skin | Select-Object -Unique
 
-    Write-Host ("{0:[HH:mm:ss]} Getting details of locked skins ($($lockedSkinIds.count))..." -f (Get-Date))
-    $lockedSkinDetailsTable = @{}
-    $lockedSkinIds | Group-GW2ObjectByCount | Get-GW2Skin | ForEach-Object { $id=$_.id; $lockedSkinDetailsTable.$id = $_ }
-    $itemsWithLockedSkins | Add-Member ScriptProperty Skin { $lockedSkinDetailsTable.($this.default_skin) } -Force
-
-    Write-Host ("{0:[HH:mm:ss]} Getting auctions of locked items..." -f (Get-Date))
+    Write-Host ("{0:[HH:mm:ss]} Getting auction listings of locked items..." -f (Get-Date))
     $auctionListingsTable = @{}
-    ($itemsWithLockedSkins | Where-Object { $_.default_skin -in $lockedSkinIds } ).id | 
-        Group-GW2ObjectByCount | Get-GW2CommerceListing -UseCache:$false -UseDB:$false | ForEach-Object { $id=$_.id; $auctionListingsTable.$id = $_ }
+    $lockedItemlistings = $lockedTradeable.id | Group-GW2ObjectByCount | Get-GW2CommerceListing -Online #-UseCache:$false -UseDB:$false
+    ForEach ($listing in $lockedItemlistings) {
+        $auctionListingsTable.($listing.id) = $listing
+    }
+    Write-Host "Found $($auctionListingsTable.count) listings"
+
+    Write-Host ("{0:[HH:mm:ss]} Adding skins and listings to locked items..." -f (Get-Date))
+    ForEach ($lockedItem in $lockedTradeable) {
+        $skin = Get-GW2DBEntry -CollectionName 'skins' -id $($lockedItem.default_skin)
+        $lockedItem | Add-Member NoteProperty Skin $Skin -Force
+        $lockedItem | Add-Member NoteProperty Listings ($auctionListingsTable.($lockedItem.id)) -Force
+    }
 
     Write-Host ("{0:[HH:mm:ss]} Associating details about items..." -f (Get-Date))
-    $itemsWithLockedSkins | Add-Member ScriptProperty WikiURL { "https://wiki.guildwars2.com/wiki/?search={0}&ns0=1" -f ($this.chat_link) } -Force
-    $itemsWithLockedSkins | Add-Member ScriptProperty Slot { $this.details.type } -Force
-    $itemsWithLockedSkins | Add-Member ScriptProperty Weight_Class { $this.details.weight_class } -Force
-    $itemsWithLockedSkins | Add-Member ScriptProperty Defense { $this.details.Defense } -Force
-    $itemsWithLockedSkins | Add-Member ScriptProperty Power { $this.details.max_power } -Force
-    $itemsWithLockedSkins | Add-Member ScriptProperty SkinId { $this.Skin.id } -Force
-    $itemsWithLockedSkins | Add-Member ScriptProperty SkinName { $this.Skin.name } -Force
-    $itemsWithLockedSkins | Add-Member ScriptProperty SkinType { $this.Skin.type } -Force
-    $itemsWithLockedSkins | Add-Member ScriptProperty SkinIcon { $this.Skin.icon } -Force
-    $itemsWithLockedSkins | Add-Member ScriptProperty Listings { if ($this.flags -notcontains "AccountBound") { $auctionListingsTable.($this.id) } }
-    $itemsWithLockedSkins | Add-Member ScriptProperty Buys { if ($this.Listings) { $this.Listings.Buys } } -Force
-    $itemsWithLockedSkins | Add-Member ScriptProperty Sells { if ($this.Listings) { $this.Listings.Sells } } -Force
-    $itemsWithLockedSkins | Add-Member ScriptProperty MaxBuy { if ($this.Listings) { ($this.Buys | Sort-Object unit_price | Select-Object -last 1).unit_price/10000 } } -Force
-    $itemsWithLockedSkins | Add-Member ScriptProperty MinSell { if ($this.Listings) { ($this.Sells | Sort-Object unit_price | Select-Object -first 1).unit_price/10000 } } -Force
+    $lockedTradeable | Add-Member ScriptProperty WikiURL { "https://wiki.guildwars2.com/wiki/?search={0}&ns0=1" -f ($this.chat_link) } -Force
+    $lockedTradeable | Add-Member ScriptProperty Slot { $this.details.type } -Force
+    $lockedTradeable | Add-Member ScriptProperty Weight_Class { $this.details.weight_class } -Force
+    $lockedTradeable | Add-Member ScriptProperty Defense { $this.details.Defense } -Force
+    $lockedTradeable | Add-Member ScriptProperty Power { $this.details.max_power } -Force
+    $lockedTradeable | Add-Member ScriptProperty SkinId { $this.Skin.id } -Force
+    $lockedTradeable | Add-Member ScriptProperty SkinName { $this.Skin.name } -Force
+    $lockedTradeable | Add-Member ScriptProperty SkinType { $this.Skin.type } -Force
+    $lockedTradeable | Add-Member ScriptProperty SkinIcon { $this.Skin.icon } -Force
+    $lockedTradeable | Add-Member ScriptProperty Buys { if ($this.Listings) { $this.Listings.Buys } } -Force
+    $lockedTradeable | Add-Member ScriptProperty Sells { if ($this.Listings) { $this.Listings.Sells } } -Force
+    $lockedTradeable | Add-Member ScriptProperty MaxBuy { if ($this.Listings) { ($this.Buys | Sort-Object unit_price | Select-Object -last 1).unit_price/10000 } } -Force
+    $lockedTradeable | Add-Member ScriptProperty MinSell { if ($this.Listings) { ($this.Sells | Sort-Object unit_price | Select-Object -first 1).unit_price/10000 } } -Force -PassThru:$PassThru
 
     $OutputFields = @(
         "id",
@@ -146,10 +172,17 @@ Process {
     )
 
     Write-Host ("{0:[HH:mm:ss]} Saving to CSV file..." -f (Get-Date))
-    $itemsWithLockedSkins | Where-Object { $_.Listings } | Select-Object -Property $OutputFields | Export-CSV -NoTypeInformation -Path $CSVFilePath -Append:$Append
+    $lockedTradeable | Where-Object { $_.Listings } | Select-Object -Property $OutputFields | Export-CSV -NoTypeInformation -Path $CSVFilePath -Append:$Append
 
     Write-Host ("{0:[HH:mm:ss]} Attempting to open CSV file with default app..." -f (Get-Date))
     Start-Process $CSVFilePath
 
     Write-Host ("{0:[HH:mm:ss]} CSV file should be found at {1}" -f (Get-Date),$CSVFilePath)
+
+}
+
+End {
+    If ($Connected) {
+        Disconnect-GW2LiteDB
+    }
 }
