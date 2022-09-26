@@ -61,9 +61,9 @@ https://github.com/smallfoxx/GW2.PS/wiki
 
 ### Submodules
 
-* [GW2.PS.API](/smallfoxx/GW2.PS.API)
-* [GW2.PS.Cache](/smallfoxx/GW2.PS.Cache)
-* [GW2.PS.LiteDB](/smallfoxx/GW2.PS.LiteDB)
+* [GW2.PS.API](https://github.com/smallfoxx/GW2.PS.API)
+* [GW2.PS.Cache](https://github.com/smallfoxx/GW2.PS.Cache)
+* [GW2.PS.LiteDB](https://github.com/smallfoxx/GW2.PS.LiteDB)
 
 ## License
 
