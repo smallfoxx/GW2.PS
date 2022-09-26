@@ -36,6 +36,10 @@ page of your ArenaNet Account:
 
 > Note: You can optionally include the `-GW2Profile <ProfileName>` property if you would like to maintain more than one account.
 
+For full Installation including utilizing a local database to improve performance, see the full wiki page article:
+
+[Installation](/smallfoxx/GW2.PS/wiki/Installation)
+
 ## Example(s)
 
 Once the module is installed and setup, you can then run common commands to retrieve data about your account.  For example, to get details about
