@@ -67,6 +67,6 @@ https://github.com/smallfoxx/GW2.PS/wiki
 
 ## License
 
-This project is published under the MIT License.  Full details available in the [LICENSE](/smallfoxx/GW2.PS/blob/main/LICENSE) file of the repository.
+This project is published under the MIT License.  Full details available in the [LICENSE](https://github.com/smallfoxx/GW2.PS/blob/main/LICENSE) file of the repository.
 
 Copyright (c) 2022 SmallFoxx
