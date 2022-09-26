@@ -13,7 +13,7 @@ The module is available from the official PowerShell Gallery with the following 
 
     Install-Module -Name GW2.PS
 
-However, this is still in pre-production, so if you want to use this early, you can download the contents of the [Module](/smallfoxx/GW2.PS/tree/main/Module) folder to your local system and run:
+However, this is still in pre-production, so if you want to use this early, you can download the contents of the [Module](/tree/main/Module) folder to your local system and run:
 
     Import-Module <pathToDownloadFolder>\GW2.PS
 
@@ -38,7 +38,7 @@ page of your ArenaNet Account:
 
 For full Installation including utilizing a local database to improve performance, see the full wiki page article:
 
-[Installation](/smallfoxx/GW2.PS/wiki/Installation)
+[Installation](https://github.com/smallfoxx/GW2.PS/wiki/Installation)
 
 ## Example(s)
 
@@ -51,11 +51,11 @@ As another example, if you would like to retrieve the daily achievements, you ca
 
     Get-GW2Achievement -Daily
 
-You can find more examples at the Wiki page [Examples](/smallfoxx/GW2.PS/wiki/Examples).
+You can find more examples at the Wiki page [Examples](https://github.com/smallfoxx/GW2.PS/wiki/Examples).
     
 ## Documentation
 
-For additional details and instructions, please see the repositories [Wiki](/smallfoxx/GW2.PS/wiki) at:
+For additional details and instructions, please see the repositories [Wiki](https://github.com/smallfoxx/GW2.PS/wiki) at:
 
 https://github.com/smallfoxx/GW2.PS/wiki
 
