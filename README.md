@@ -65,6 +65,10 @@ https://github.com/smallfoxx/GW2.PS/wiki
 * [GW2.PS.Cache](https://github.com/smallfoxx/GW2.PS.Cache)
 * [GW2.PS.LiteDB](https://github.com/smallfoxx/GW2.PS.LiteDB)
 
+## Support
+
+This is a voluntary, community based project, so we'll help out as we can but nothing is guaranteed.  Come join us on our [[Discord Server]] and stumble your way through with us!
+
 ## License
 
 This project is published under the MIT License.  Full details available in the [LICENSE](https://github.com/smallfoxx/GW2.PS/blob/main/LICENSE) file of the repository.
