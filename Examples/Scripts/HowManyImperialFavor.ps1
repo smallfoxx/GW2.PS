@@ -7,10 +7,19 @@ How many Imperial Favors your aiming to get
 This will go through the bags of all your characters. WARNING!! This can cause quite a delay from the API
 .PARAMETER IncludeDetail
 Grab the details about the items as well.
+.PARAMETER FilePath
+Path to a file to put the remaining total in
+.PARAMETER ReplaceFilter
+RegEx filter to use to find string to replace
+.PARAMETER ReplaceFormat
+String used to place content into file. {0} represents remaining amount, {1} is first match in $ReplaceFilter
 #>
 param([int]$TargetFavor = 10000,
     [switch]$IncludeCharacterInventory,
-    [switch]$IncludeDetail)
+    [switch]$IncludeDetail,
+    [string]$FilePath,
+    [string]$ReplaceFilter="(To Go:\D*)(\d+)",
+    [string]$ReplaceFormat="{1}{0}")
 
 If (-not (Get-Module -ListAvailable GW2.PS.API)) {
     Write-Warning "GW2.PS.API Module not found on local system"
@@ -73,5 +82,17 @@ If ($IncludeDetail) {
     })
 }
 
+If ($FilePath) {
+    $content = Get-Content $FilePath
+    $replaced = ForEach ($line in $content) {
+        If ($line -match $ReplaceFilter) {
+            $Prefix = $matches[1]
+            $line -replace $ReplaceFilter,($ReplaceFormat -f $Total.Remaining,$Prefix)
+        } else {
+            $line
+        }
+    }
+    $replaced | Set-Content $FilePath
+}
 
 $Total
